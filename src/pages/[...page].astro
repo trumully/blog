@@ -1,0 +1,46 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatDate } from "../utils/date";
+
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection("blog");
+  const sorted = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  return paginate(sorted, { pageSize: 5 });
+}
+
+const { page } = Astro.props;
+const postsWithContent = await Promise.all(
+  page.data.map(async (post) => {
+    const { Content } = await render(post);
+    return { post, Content };
+  })
+);
+---
+
+<BaseLayout pageTitle="trumully blog" description="My blog">
+  {
+    postsWithContent.map(({ post, Content }, i) => (
+      <>
+        <article class="post-full">
+          <h2>
+            <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+          </h2>
+          <div class="post-meta">
+            <span class="meta-key">date</span>
+            <span>{formatDate(post.data.date)}</span>
+            <span class="meta-key">desc</span>
+            <span>{post.data.description}</span>
+          </div>
+          <Content />
+        </article>
+        {i < postsWithContent.length - 1 && <hr />}
+      </>
+    ))
+  }
+  <nav class="pagination">
+    {page.url.prev && <a href={page.url.prev}>[← prev]</a>}
+    <span>page {page.currentPage} of {page.lastPage}</span>
+    {page.url.next && <a href={page.url.next}>[next →]</a>}
+  </nav>
+</BaseLayout>

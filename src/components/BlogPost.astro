@@ -1,0 +1,9 @@
+---
+const { url, title, date } = Astro.props;
+---
+
+<li class="post-entry">
+  <span class="prompt">&gt;</span>
+  <a href={url}>{title}</a>
+  {date && <time>{date}</time>}
+</li>
