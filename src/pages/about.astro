@@ -1,0 +1,11 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import hangyodon from "../assets/hangyodon.jpg";
+const pageTitle = "About";
+---
+
+<BaseLayout pageTitle={pageTitle} description="About me and my journey with Astro">
+  <p>My name is Truman Mulholland and I am a Junior Software Developer from New Zealand.</p>
+  <Image src={hangyodon} alt="Hangyodon" />
+</BaseLayout>
