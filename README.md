@@ -23,7 +23,7 @@ npm run dev  # localhost:4321
 ## Commands
 
 | Command                | Action                   |
-|------------------------|--------------------------|
+| ---------------------- | ------------------------ |
 | `npm run dev`          | Start dev server         |
 | `npm run build`        | Build to `./dist/`       |
 | `npm run preview`      | Preview production build |
