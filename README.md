@@ -31,7 +31,3 @@ npm run dev  # localhost:4321
 | `npm run lint:fix`     | Fix ESLint issues        |
 | `npm run prettier`     | Check formatting         |
 | `npm run prettier:fix` | Fix formatting           |
-
-## Deployment
-
-Deployed to Netlify. Pushing to `main` triggers a production deploy; PRs get a preview URL posted as a comment.
