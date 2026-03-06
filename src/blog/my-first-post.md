@@ -1,9 +1,10 @@
 ---
 title: My First Post
-date: 2026-03-06T03:50:00Z 
+date: 2026-03-06T03:50:00Z
 description: It's not going to be any good...
 tags: ["blogging", "claude-code", "agentic-development"]
 ---
+
 Kia ora! Welcome! As my [about page](https://trumully.netlify.app/about/) states I am Truman and I'm a Junior Software Developer from New Zealand. This is my first post.
 
 You may have inferred from the terminal-like UI of this blog that software development will be the primary focus of my writing. However, I do not expect it will be the exclusive focus; I would like to cover a variety of topics especially things I learn, encounter, or make.
