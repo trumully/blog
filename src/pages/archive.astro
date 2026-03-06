@@ -29,7 +29,11 @@ for (const post of sorted) {
             <h3>{month}</h3>
             <ul class="post-list">
               {posts.map((post) => (
-                <BlogPost url={`/posts/${post.id}/`} title={post.data.title} date={formatDateShort(post.data.date)} />
+                <BlogPost
+                  url={`${import.meta.env.BASE_URL}posts/${post.id}/`}
+                  title={post.data.title}
+                  date={formatDateShort(post.data.date)}
+                />
               ))}
             </ul>
           </section>
