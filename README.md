@@ -1,6 +1,6 @@
 # blog
 
-Personal blog built with [Astro](https://astro.build), deployed at https://trumully.netlify.app.
+Personal blog built with [Astro](https://astro.build), deployed at https://trumully.github.io/blog.
 
 ## Features
 
