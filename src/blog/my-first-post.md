@@ -6,7 +6,7 @@ tags: ["blogging", "claude-code", "agentic-development"]
 ---
 Kia ora! Welcome! As my [about page](https://trumully.netlify.app/about/) states I am Truman and I'm a Junior Software Developer from New Zealand. This is my first post.
 
-You may have inferred from the terminal-like UI of this blog that software development will be the primary focus of my writing. However, I do not expect it will not be the exclusive focus; I would like to cover a variety of topics especially things I learn, encounter, or make.
+You may have inferred from the terminal-like UI of this blog that software development will be the primary focus of my writing. However, I do not expect it will be the exclusive focus; I would like to cover a variety of topics especially things I learn, encounter, or make.
 
 For starters, getting this blog up and running is one thing that has been a learning experience for me. Notably, I am trying to adopt using agentic developent driven by [Claude Code](https://claude.com/product/claude-code). You can observe the driving `CLAUDE.md` and `AGENTS.md` files at the [source of this blog](https://github.com/trumully/blog). Despite reservations I have for this kind of development, I have found it suitable to be applied to projects such as this blog where aspects of it I already have an understanding of so I can be mostly sure of the output.
 
