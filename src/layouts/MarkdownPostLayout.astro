@@ -12,7 +12,7 @@ const { frontmatter } = Astro.props;
     <span>{frontmatter.description}</span>
     <span class="meta-key">tags</span>
     <span class="meta-tags">
-      {frontmatter.tags.map((tag: string) => <a href={`/tags/${tag}`}>{tag}</a>)}
+      {frontmatter.tags.map((tag: string) => <a href={`${import.meta.env.BASE_URL}tags/${tag}`}>{tag}</a>)}
     </span>
   </div>
   <slot />

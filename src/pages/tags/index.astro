@@ -8,6 +8,6 @@ const pageTitle = "Tags";
 
 <BaseLayout pageTitle={pageTitle}>
   <div class="tags-list">
-    {tags.map((tag: string) => <a href={`/tags/${tag}`}>{tag}</a>)}
+    {tags.map((tag: string) => <a href={`${import.meta.env.BASE_URL}tags/${tag}`}>{tag}</a>)}
   </div>
 </BaseLayout>

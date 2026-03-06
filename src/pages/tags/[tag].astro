@@ -25,7 +25,11 @@ const { posts } = Astro.props;
   <ul class="post-list">
     {
       posts.map((post) => (
-        <BlogPost url={`/posts/${post.id}/`} title={post.data.title} date={formatDate(post.data.date)} />
+        <BlogPost
+          url={`${import.meta.env.BASE_URL}posts/${post.id}/`}
+          title={post.data.title}
+          date={formatDate(post.data.date)}
+        />
       ))
     }
   </ul>
