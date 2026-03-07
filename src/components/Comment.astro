@@ -1,0 +1,74 @@
+---
+import { formatDateComment } from "../utils/date";
+
+interface Props {
+  id: string;
+  author: string;
+  date: Date;
+  url?: string;
+}
+const { id, author, date, url } = Astro.props;
+const formattedDate = formatDateComment(date);
+---
+
+<div class="comment" id={id}>
+  <div class="comment-header">
+    <span class="comment-prompt">&gt;</span>
+    <span class="comment-author">
+      {
+        url ? (
+          <a href={url} rel="noopener noreferrer">
+            {author}
+          </a>
+        ) : (
+          author
+        )
+      }
+    </span>
+    <a class="comment-permalink" href={`#${id}`}>#</a>
+  </div>
+  <div class="comment-body">
+    <slot />
+  </div>
+  <div class="comment-footer">{formattedDate}</div>
+</div>
+
+<style>
+  .comment {
+    margin: 1rem 0;
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+  }
+
+  .comment-header {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .comment-prompt {
+    color: var(--accent);
+  }
+
+  .comment-author {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .comment-footer {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+
+  .comment-permalink {
+    color: var(--muted);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+  .comment-permalink:hover {
+    color: var(--accent);
+  }
+</style>

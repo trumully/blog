@@ -2,32 +2,36 @@
 
 Personal blog built with [Astro](https://astro.build), deployed at https://trumully.github.io/blog.
 
-## Features
+## Comments
 
-- Paginated post listing (5 per page)
-- Tag-based filtering
-- Archive view grouped by year/month
-- RSS feed & sitemap
-- Light/dark theme toggle
-- Terminal-inspired design (JetBrains Mono)
+To comment on a post, submit a pull request here adding a Markdown file to:
 
-## Getting Started
+`src/content/comments/{post-name}/`
 
-Requires Node 24 (managed via [Volta](https://volta.sh)).
+### Using the VS Code task (recommended)
 
-```sh
-npm install
-npm run dev  # localhost:4321
+1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
+2. Run **Tasks: Run Task** → **New Comment**
+3. Enter the post slug (e.g. `my-post-title`) and your name when prompted
+4. The file is created at the correct path with frontmatter pre-filled
+
+### Manually
+
+File name: `{unix-timestamp}-{your-name}.md`
+
+```markdown
+---
+author: Your Name
+date: 2026-03-07T10:00:00Z
+# url: https://your-website.com  # optional, delete this line if not applicable
+---
+
+Your comment here. You can use **markdown**!
 ```
 
-## Commands
+## Contributions
 
-| Command                | Action                   |
-| ---------------------- | ------------------------ |
-| `npm run dev`          | Start dev server         |
-| `npm run build`        | Build to `./dist/`       |
-| `npm run preview`      | Preview production build |
-| `npm run lint`         | Run ESLint               |
-| `npm run lint:fix`     | Fix ESLint issues        |
-| `npm run prettier`     | Check formatting         |
-| `npm run prettier:fix` | Fix formatting           |
+This is my personal blog, but I am happy to accept contributions such as:
+
+- Comments (as above)
+- Corrections (typos, etc)

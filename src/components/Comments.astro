@@ -1,0 +1,42 @@
+---
+import { getCollection, render } from "astro:content";
+import Comment from "./Comment.astro";
+
+interface Props {
+  postId: string;
+}
+const { postId } = Astro.props;
+
+const allComments = await getCollection("comments");
+const postComments = allComments
+  .filter((c) => c.id.startsWith(postId + "/"))
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+---
+
+{
+  postComments.length > 0 && (
+    <>
+      <hr />
+      <section class="comments">
+        <h2>Comments</h2>
+        {postComments.map(async (c) => {
+          const { Content } = await render(c);
+          return (
+            <Comment author={c.data.author} date={c.data.date} url={c.data.url} id={c.id.split("/").pop()!}>
+              <Content />
+            </Comment>
+          );
+        })}
+      </section>
+    </>
+  )
+}
+<section class="comments">
+  <hr />
+  <h2>Want to comment?</h2>
+  <p class="comment-cta">
+    You can comment on this post by <a href="https://github.com/trumully/blog#readme" rel="noopener noreferrer"
+      >sending a pull reqeuest</a
+    >.
+  </p>
+</section>
