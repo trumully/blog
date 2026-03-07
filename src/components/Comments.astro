@@ -13,6 +13,7 @@ const postComments = allComments
   .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
 ---
 
+<hr />
 <section class="comments">
   <h2>comments</h2>
   {postComments.length === 0 && <p class="no-comments">no comments yet</p>}
@@ -27,22 +28,4 @@ const postComments = allComments
     })
   }
 
-  <hr />
-
-  <div class="leave-comment">
-    <h2>leave a comment</h2>
-    <p>
-      To leave a comment, submit a pull request <a href="https://github.com/trumully/blog">here</a> adding a Markdown file
-      to:
-    </p>
-    <pre><code>src/content/comments/{postId}/</code></pre>
-    <p>File name: <code>&#123;unix-timestamp&#125;-&#123;your-name&#125;.md</code></p>
-    <pre><code>---
-author: Your Name
-date: 2026-03-07T10:00:00Z
-url: https://your-website.com  # optional
----
-
-Your comment here. You can use **markdown**!</code></pre>
-  </div>
 </section>
