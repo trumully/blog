@@ -6,24 +6,12 @@ import prettierConfig from "eslint-config-prettier";
 
 export default defineConfig(
   {
-    ignores: ["dist/**", ".astro/**"],
+    ignores: ["dist/**", ".astro/**", ".claude/**"],
   },
   eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked.map((config) => ({
-    ...config,
-    files: ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
-  })),
-  ...eslintPluginAstro.configs.recommended,
-  {
-    files: ["**/*.astro"],
-    languageOptions: {
-      parserOptions: {
-        parser: "@typescript-eslint/parser",
-      },
-    },
-  },
   {
     files: ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+    extends: tseslint.configs.strictTypeChecked,
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -32,6 +20,16 @@ export default defineConfig(
     },
     rules: {
       "@typescript-eslint/consistent-type-imports": ["error", { fixStyle: "inline-type-imports" }],
+    },
+  },
+  ...eslintPluginAstro.configs.recommended,
+  {
+    files: ["**/*.astro"],
+    languageOptions: {
+      parserOptions: {
+        parser: "@typescript-eslint/parser",
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
   },
   prettierConfig
