@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "postSlug",
+      "type": "promptString",
+      "description": "Post slug (e.g. my-post-title)"
+    },
+    {
+      "id": "authorName",
+      "type": "promptString",
+      "description": "Your name (e.g. John Doe)"
+    }
+  ],
+  "tasks": [
+    {
+      "label": "New Comment",
+      "type": "shell",
+      "command": "node .vscode/new-comment.mjs \"${input:postSlug}\" \"${input:authorName}\"",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
