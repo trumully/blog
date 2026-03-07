@@ -7,6 +7,12 @@ export function formatDateShort(date: Date): string {
   });
 }
 
+export function formatDateComment(date: Date): string {
+  const datePart = date.toISOString().slice(0, 10); // YYYY-MM-DD
+  const timePart = date.toISOString().slice(11, 16); // HH:MM
+  return `${datePart} ${timePart} UTC`;
+}
+
 export function formatDate(date: Date): string {
   const weekday = date.toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" });
   const day = date.toLocaleDateString("en-GB", { day: "2-digit", timeZone: "UTC" });

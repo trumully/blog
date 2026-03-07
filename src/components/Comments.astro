@@ -13,19 +13,26 @@ const postComments = allComments
   .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
 ---
 
-<hr />
+{postComments.length > 0 && (
+  <>
+    <hr />
+    <section class="comments">
+      <h2>Comments</h2>
+      {
+        postComments.map(async (c) => {
+          const { Content } = await render(c);
+          return (
+            <Comment author={c.data.author} date={c.data.date} url={c.data.url} id={c.id.split("/").pop()!}>
+              <Content />
+            </Comment>
+          );
+        })
+      }
+    </section>
+  </>
+)}
 <section class="comments">
-  <h2>comments</h2>
-  {postComments.length === 0 && <p class="no-comments">no comments yet</p>}
-  {
-    postComments.map(async (c) => {
-      const { Content } = await render(c);
-      return (
-        <Comment author={c.data.author} date={c.data.date} url={c.data.url}>
-          <Content />
-        </Comment>
-      );
-    })
-  }
-
+  <hr />
+  <h2>Want to comment?</h2>
+  <p class="comment-cta">You can comment on this post by <a href="https://github.com/trumully/blog#readme" rel="noopener noreferrer">sending a pull reqeuest</a>.</p>
 </section>

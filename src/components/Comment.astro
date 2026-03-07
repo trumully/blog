@@ -1,16 +1,17 @@
 ---
-import { formatDate } from "../utils/date";
+import { formatDateComment } from "../utils/date";
 
 interface Props {
+  id: string;
   author: string;
   date: Date;
   url?: string;
 }
-const { author, date, url } = Astro.props;
-const formattedDate = formatDate(date);
+const { id, author, date, url } = Astro.props;
+const formattedDate = formatDateComment(date);
 ---
 
-<div class="comment">
+<div class="comment" id={id}>
   <div class="comment-header">
     <span class="comment-prompt">&gt;</span>
     <span class="comment-author">
@@ -24,11 +25,12 @@ const formattedDate = formatDate(date);
         )
       }
     </span>
-    <span class="comment-date">| {formattedDate}</span>
+    <a class="comment-permalink" href={`#${id}`}>#</a>
   </div>
   <div class="comment-body">
     <slot />
   </div>
+  <div class="comment-footer">{formattedDate}</div>
 </div>
 
 <style>
@@ -55,8 +57,18 @@ const formattedDate = formatDate(date);
     font-weight: 700;
   }
 
-  .comment-date {
+  .comment-footer {
     color: var(--muted);
     font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+
+  .comment-permalink {
+    color: var(--muted);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+  .comment-permalink:hover {
+    color: var(--accent);
   }
 </style>
