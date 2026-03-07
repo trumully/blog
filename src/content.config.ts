@@ -11,11 +11,10 @@ const blog = defineCollection({
   }),
 });
 const comments = defineCollection({
-  type: "data",
+  loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/comments" }),
   schema: z.object({
     author: z.string(),
     date: z.coerce.date(),
-    content: z.string(),
     url: z.string().url().optional(),
   }),
 });
