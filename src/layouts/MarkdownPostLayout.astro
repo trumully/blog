@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import Comments from "../components/Comments.astro";
 import { formatDate } from "../utils/date";
 const { frontmatter } = Astro.props;
 ---
@@ -16,4 +17,11 @@ const { frontmatter } = Astro.props;
     </span>
   </div>
   <slot />
+  <Comments
+    postId={frontmatter.slug ??
+      frontmatter.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")}
+  />
 </BaseLayout>

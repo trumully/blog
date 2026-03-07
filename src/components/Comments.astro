@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+import Comment from "./Comment.astro";
+
+interface Props {
+  postId: string;
+}
+const { postId } = Astro.props;
+
+const allComments = await getCollection("comments");
+const postComments = allComments
+  .filter((c) => c.id.startsWith(postId + "/"))
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+---
+
+<section class="comments">
+  <h2>comments</h2>
+  {postComments.length === 0 && <p class="no-comments">no comments yet</p>}
+  {
+    postComments.map((c) => (
+      <Comment author={c.data.author} date={c.data.date} content={c.data.content} url={c.data.url} />
+    ))
+  }
+
+  <hr />
+
+  <div class="leave-comment">
+    <h2>leave a comment</h2>
+    <p>To leave a comment, submit a pull request adding a YAML file to:</p>
+    <pre><code>src/content/comments/{postId}/</code></pre>
+    <p>File name: <code>&#123;unix-timestamp&#125;-&#123;your-name&#125;.yaml</code></p>
+    <pre><code>---
+author: Your Name
+date: 2026-03-07T10:00:00Z
+content: |
+  Your comment here.
+url: https://your-website.com  # optional
+---</code></pre>
+  </div>
+</section>

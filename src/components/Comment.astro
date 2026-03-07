@@ -1,0 +1,61 @@
+---
+interface Props {
+  author: string;
+  date: Date;
+  content: string;
+  url?: string;
+}
+const { author, date, content, url } = Astro.props;
+const formattedDate = date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+---
+
+<div class="comment">
+  <div class="comment-header">
+    <span class="comment-prompt">&gt;</span>
+    <span class="comment-author">
+      {
+        url ? (
+          <a href={url} rel="noopener noreferrer">
+            {author}
+          </a>
+        ) : (
+          author
+        )
+      }
+    </span>
+    <span class="comment-date">| {formattedDate}</span>
+  </div>
+  <div class="comment-body">
+    {content}
+  </div>
+</div>
+
+<style>
+  .comment {
+    margin: 1rem 0;
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+  }
+
+  .comment-header {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .comment-prompt {
+    color: var(--accent);
+  }
+
+  .comment-author {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .comment-date {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+</style>
