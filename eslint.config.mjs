@@ -6,7 +6,7 @@ import prettierConfig from "eslint-config-prettier";
 
 export default defineConfig(
   {
-    ignores: ["dist/**", ".astro/**", ".claude/**"],
+    ignores: ["dist/**", ".astro/**", ".claude/**", ".vscode/**"],
   },
   eslint.configs.recommended,
   {
