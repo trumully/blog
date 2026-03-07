@@ -2,32 +2,24 @@
 
 Personal blog built with [Astro](https://astro.build), deployed at https://trumully.github.io/blog.
 
-## Features
+## Comments
+To comment on a post, submit a pull request here adding a YAML file to:
 
-- Paginated post listing (5 per page)
-- Tag-based filtering
-- Archive view grouped by year/month
-- RSS feed & sitemap
-- Light/dark theme toggle
-- Terminal-inspired design (JetBrains Mono)
+`src/content/comments/{post-name}/`
 
-## Getting Started
+File name: `{unix-timestamp}-{your-name}.yaml`
 
-Requires Node 24 (managed via [Volta](https://volta.sh)).
-
-```sh
-npm install
-npm run dev  # localhost:4321
+```yaml
+---
+author: Your Name
+date: 2026-03-07T10:00:00Z
+content: |
+  Your comment here.
+url: https://your-website.com  # optional
+---
 ```
 
-## Commands
-
-| Command                | Action                   |
-| ---------------------- | ------------------------ |
-| `npm run dev`          | Start dev server         |
-| `npm run build`        | Build to `./dist/`       |
-| `npm run preview`      | Preview production build |
-| `npm run lint`         | Run ESLint               |
-| `npm run lint:fix`     | Fix ESLint issues        |
-| `npm run prettier`     | Check formatting         |
-| `npm run prettier:fix` | Fix formatting           |
+## Contributions
+This is my personal blog, but I am happy to accept contributions such as:
+- Comments (as above)
+- Corrections (typos, etc)
