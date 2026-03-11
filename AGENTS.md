@@ -40,6 +40,6 @@ Astro pages use a frontmatter fence (`---`) at the top for server-side JavaScrip
 
 ## Deployment & CI
 
-- Hosted on GitHub Pages at `https://trumully.github.io/blog`
+- Hosted on GitHub Pages at `https://truman.mulholland.nz`
 - CI runs lint + build on every push and PR
 - Merges to `main` deploy to production; PRs get a deploy preview
