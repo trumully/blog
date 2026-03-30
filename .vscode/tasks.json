@@ -7,12 +7,27 @@
       "description": "Post slug (e.g. my-post-title)"
     },
     {
+      "id": "newPostSlug",
+      "type": "promptString",
+      "description": "Post slug (e.g. my-post-title)"
+    },
+    {
       "id": "authorName",
       "type": "promptString",
       "description": "Your name (e.g. John Doe)"
     }
   ],
   "tasks": [
+    {
+      "label": "New Post",
+      "type": "shell",
+      "command": "node .vscode/new-post.mjs \"${input:newPostSlug}\"",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
     {
       "label": "New Comment",
       "type": "shell",

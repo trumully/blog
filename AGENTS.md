@@ -20,9 +20,10 @@ npm run prettier:fix # Auto-fix formatting
 This is an [Astro](https://astro.build) blog site using the minimal template with strict TypeScript.
 
 - `src/pages/` — File-based routing. `.astro` and `.md` files become routes based on filename.
-- `src/components/` — Astro components: `BlogPost.astro`, `Footer.astro`, `Header.astro`, `Navigation.astro`, `Social.astro`, `ThemeIcon.astro`.
+- `src/components/` — Astro components: `BlogPost.astro`, `Comment.astro`, `Comments.astro`, `Footer.astro`, `Header.astro`, `Navigation.astro`, `Social.astro`, `ThemeIcon.astro`.
 - `src/layouts/` — Page layouts: `BaseLayout.astro`, `MarkdownPostLayout.astro`.
 - `src/blog/` — Markdown blog post content files.
+- `src/content/comments/` — Markdown comment files linked to blog posts.
 - `src/styles/` — Global CSS (`global.css`).
 - `src/assets/` — Static assets imported by components.
 - `src/utils/` — Utility functions (e.g. `date.ts`).
@@ -31,6 +32,25 @@ This is an [Astro](https://astro.build) blog site using the minimal template wit
 - `astro.config.mts` — Astro configuration.
 
 Astro pages use a frontmatter fence (`---`) at the top for server-side JavaScript, followed by HTML/component markup. TypeScript is configured in strict mode via `astro/tsconfigs/strict`.
+
+## Content Schemas
+
+**Blog post** (`src/blog/*.md`) frontmatter (all required):
+
+```yaml
+title: "Post Title"
+date: 2026-01-01
+description: "Short description"
+tags: ["tag1", "tag2"]
+```
+
+**Comment** (`src/content/comments/*.md`) frontmatter:
+
+```yaml
+author: "Name" # required
+date: 2026-01-01 # required
+url: "https://..." # optional
+```
 
 ## Tooling
 
