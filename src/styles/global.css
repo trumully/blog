@@ -6,8 +6,8 @@
   --accent: #179299;
   --muted: #6c6f85;
   --border: #acb0be;
-  --code-bg: #e6e9ef;
-  --link: #179299;
+  --code-bg: #ccd0da;
+  --link: #1e66f5;
 }
 
 html.dark {
@@ -17,7 +17,7 @@ html.dark {
   --muted: #a6adc8;
   --border: #45475a;
   --code-bg: #181825;
-  --link: #94e2d5;
+  --link: #89b4fa;
 }
 
 html {
@@ -173,6 +173,8 @@ header {
 
 .nav-links a {
   color: var(--text);
+  padding: 0.1em 0.2em;
+  border-radius: 2px;
 }
 
 .nav-links a::before {
@@ -186,8 +188,14 @@ header {
 }
 
 .nav-links a:hover {
-  color: var(--accent);
+  color: var(--bg);
+  background: var(--accent);
   text-decoration: none;
+}
+
+.nav-links a:hover::before,
+.nav-links a:hover::after {
+  color: var(--bg);
 }
 
 /* Theme toggle */
@@ -210,6 +218,16 @@ header {
   color: var(--accent);
 }
 
+/* Shiki dual-theme: override inline background with palette surface colors */
+pre.astro-code {
+  background-color: var(--code-bg) !important;
+}
+
+html.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: inherit !important;
+}
+
 /* Post list */
 ul.post-list {
   display: flex;
@@ -225,6 +243,10 @@ li.post-entry {
 }
 
 li.post-entry .prompt {
+  color: var(--accent);
+}
+
+li.post-entry a {
   color: var(--accent);
 }
 
@@ -255,6 +277,10 @@ li.post-entry time {
   gap: 0.25rem;
 }
 
+.post-meta .meta-tags a {
+  color: var(--accent);
+}
+
 .post-meta .meta-tags a::before {
   content: "[";
   color: var(--accent);
@@ -270,6 +296,10 @@ li.post-entry time {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.tags-list a {
+  color: var(--accent);
 }
 
 .tags-list a::before {

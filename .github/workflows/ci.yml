@@ -16,31 +16,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  lint-format:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6.0.2
-      - uses: volta-cli/action@615a78f6c83e116339c53b94f3f82b4d6c0b7d18 # v5.0.0
-      - run: npm ci
-      - run: npm run fmt:check
-      - run: npm run lint
-      - run: npx astro sync
-
   build:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6.0.2
       - uses: actions/configure-pages@v6
       - uses: volta-cli/action@615a78f6c83e116339c53b94f3f82b4d6c0b7d18 # v5.0.0
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v5
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+      - run: uv run -s build.py --check
+      - if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
   deploy:
     runs-on: ubuntu-24.04
-    needs: [lint-format, build]
+    needs: build
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment:
       name: github-pages

@@ -8,4 +8,12 @@ const site = "https://truman.mulholland.nz";
 export default defineConfig({
   site: process.env.SITE_URL ?? site,
   integrations: [sitemap()],
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: "catppuccin-latte",
+        dark: "catppuccin-mocha",
+      },
+    },
+  },
 }) satisfies AstroUserConfig;

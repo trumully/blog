@@ -1,9 +1,15 @@
 ---
+import type { GetStaticPathsOptions, Page } from "astro";
 import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { formatDate } from "../utils/date";
 
-export async function getStaticPaths({ paginate }) {
+interface Props {
+  page: Page<CollectionEntry<"blog">>;
+}
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const allPosts = await getCollection("blog");
   const sorted = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
   return paginate(sorted, { pageSize: 5 });
