@@ -1,0 +1,5 @@
+{
+  "printWidth": 120,
+  "trailingComma": "es5",
+  "ignorePatterns": ["dist/**", ".astro/**", ".claude/**", ".vscode/**"]
+}
