@@ -1,6 +1,23 @@
-# AGENTS.md
+See [ARCHITECTURE.md](ARCHITECTURE.md) to understand the project. See [CONVENTIONS.md](CONVENTIONS.md) for naming, formatting, and other conventions.
 
-This file provides guidance to AI agents working with code in this repository.
+Oxfmt used for JS/TS code formatting. Oxfmt + Prettier used for Astro code formatting.
+
+## Content creation
+
+Use these scripts (not manual file creation) — they set correct paths, timestamps, and frontmatter:
+
+```sh
+node .vscode/new-post.mts <post-slug>        # creates src/blog/<slug>.md
+node .vscode/new-comment.mts <post-slug> <author-name>  # creates src/content/comments/<postSlug>/<ts>-<authorSlug>.md
+```
+
+Also available as VS Code tasks: **New Post** / **New Comment** (prompts for inputs).
+
+## Deployment & CI
+
+- Hosted on GitHub Pages at `https://truman.mulholland.nz`
+- CI runs lint + build on every push and PR
+- Merges to `main` deploy to production
 
 ## Commands
 
@@ -9,57 +26,8 @@ npm run dev          # Start dev server at localhost:4321
 npm run build        # Build production site to ./dist/
 npm run preview      # Preview production build locally
 npm run astro ...    # Run Astro CLI commands (e.g. astro add, astro check)
-npm run lint         # Run ESLint
-npm run lint:fix     # Auto-fix ESLint issues
-npm run prettier     # Check formatting
-npm run prettier:fix # Auto-fix formatting
+npm run lint         # Run oxlint
+npm run lint:fix     # Auto-fix oxlint issues
+npm run fmt:check    # Check formatting
+npm run fmt          # Auto-fix formatting
 ```
-
-## Architecture
-
-This is an [Astro](https://astro.build) blog site using the minimal template with strict TypeScript.
-
-- `src/pages/` — File-based routing. `.astro` and `.md` files become routes based on filename.
-- `src/components/` — Astro components: `BlogPost.astro`, `Comment.astro`, `Comments.astro`, `Footer.astro`, `Header.astro`, `Navigation.astro`, `Social.astro`, `ThemeIcon.astro`.
-- `src/layouts/` — Page layouts: `BaseLayout.astro`, `MarkdownPostLayout.astro`.
-- `src/blog/` — Markdown blog post content files.
-- `src/content/comments/` — Markdown comment files linked to blog posts.
-- `src/styles/` — Global CSS (`global.css`).
-- `src/assets/` — Static assets imported by components.
-- `src/utils/` — Utility functions (e.g. `date.ts`).
-- `src/content.config.ts` — Content collection schema for the blog.
-- `public/` — Static assets served at root (e.g. `public/favicon.svg` → `/favicon.svg`).
-- `astro.config.mts` — Astro configuration.
-
-Astro pages use a frontmatter fence (`---`) at the top for server-side JavaScript, followed by HTML/component markup. TypeScript is configured in strict mode via `astro/tsconfigs/strict`.
-
-## Content Schemas
-
-**Blog post** (`src/blog/*.md`) frontmatter (all required):
-
-```yaml
-title: "Post Title"
-date: 2026-01-01
-description: "Short description"
-tags: ["tag1", "tag2"]
-```
-
-**Comment** (`src/content/comments/*.md`) frontmatter:
-
-```yaml
-author: "Name" # required
-date: 2026-01-01 # required
-url: "https://..." # optional
-```
-
-## Tooling
-
-- **ESLint** — `eslint-plugin-astro`, `typescript-eslint` (strictTypeChecked), `eslint-config-prettier`
-- **Prettier** — `prettier-plugin-astro`, 120-character print width
-- **TypeScript** — strict mode via `astro/tsconfigs/strict`
-
-## Deployment & CI
-
-- Hosted on GitHub Pages at `https://truman.mulholland.nz`
-- CI runs lint + build on every push and PR
-- Merges to `main` deploy to production; PRs get a deploy preview

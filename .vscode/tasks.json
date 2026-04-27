@@ -21,7 +21,7 @@
     {
       "label": "New Post",
       "type": "shell",
-      "command": "node .vscode/new-post.mjs \"${input:newPostSlug}\"",
+      "command": "node .vscode/new-post.mts \"${input:newPostSlug}\"",
       "presentation": {
         "reveal": "always",
         "panel": "shared"
@@ -31,7 +31,7 @@
     {
       "label": "New Comment",
       "type": "shell",
-      "command": "node .vscode/new-comment.mjs \"${input:postSlug}\" \"${input:authorName}\"",
+      "command": "node .vscode/new-comment.mts \"${input:postSlug}\" \"${input:authorName}\"",
       "presentation": {
         "reveal": "always",
         "panel": "shared"

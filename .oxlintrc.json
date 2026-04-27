@@ -1,0 +1,13 @@
+{
+  "plugins": ["typescript"],
+  "categories": {
+    "correctness": "off"
+  },
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "typescript/consistent-type-imports": ["error", { "fixStyle": "inline-type-imports" }]
+  },
+  "ignorePatterns": ["dist/**", ".astro/**", ".claude/**", ".vscode/**"]
+}

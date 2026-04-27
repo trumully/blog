@@ -1,16 +1,16 @@
 {
   "name": "blog",
-  "type": "module",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write ."
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
+    "fmt": "oxfmt . && prettier --write \"**/*.astro\"",
+    "fmt:check": "oxfmt --check . && prettier --check \"**/*.astro\""
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.15",
@@ -18,14 +18,11 @@
     "astro": "^5.18.0"
   },
   "devDependencies": {
-    "@eslint/js": "10.0.1",
-    "@typescript-eslint/parser": "^8.56.1",
-    "eslint": "^10.0.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-astro": "^1.6.0",
+    "oxfmt": "^0.46.0",
+    "oxlint": "^1.61.0",
+    "oxlint-tsgolint": "^0.22.0",
     "prettier": "3.8.1",
-    "prettier-plugin-astro": "0.14.1",
-    "typescript-eslint": "^8.56.1"
+    "prettier-plugin-astro": "0.14.1"
   },
   "volta": {
     "node": "24.14.0"

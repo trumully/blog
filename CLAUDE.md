@@ -1,3 +1,3 @@
-# CLAUDE.md
-
-Read AGENTS.md for guidance on working with this repository.
+@AGENTS.md
+@ARCHITECTURE.md
+@CONVENTIONS.md

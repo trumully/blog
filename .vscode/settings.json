@@ -1,18 +1,16 @@
 {
-  "eslint.validate": ["javascript", "javascriptreact", "astro", "typescript", "typescriptreact"],
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "oxc.fmt.configPath": ".oxfmtrc.json",
+  "oxc.configPath": ".oxlintrc.json",
+  "oxc.path.tsgolint": "node_modules/.bin/tsgolint",
+  "editor.formatOnSave": false,
+  "[javascript][typescript][javascriptreact][typescriptreact][json][jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "[astro]": {
     "editor.defaultFormatter": "astro-build.astro-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.format.oxc": "always",
+    "source.fixAll.oxc": "always"
   }
 }
