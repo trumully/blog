@@ -21,11 +21,24 @@ Also available as VS Code tasks: **New Post** / **New Comment** (prompts for inp
 
 ## Commands
 
+Use `build.py` for orchestrated workflows (installs deps, sets env vars, runs steps in order):
+
+```sh
+uv run -s build.py --check               # Full CI check: typecheck + lint + fmt + build
+uv run -s build.py --lint                # Typecheck + lint + fmt check only
+uv run -s build.py --build               # Build only
+uv run -s build.py --fix                 # Auto-fix lint and formatting
+uv run -s build.py --skip-install <...>  # Skip npm install (use when deps already installed)
+```
+
+Individual npm commands for targeted tasks:
+
 ```sh
 npm run dev          # Start dev server at localhost:4321
 npm run build        # Build production site to ./dist/
 npm run preview      # Preview production build locally
 npm run astro ...    # Run Astro CLI commands (e.g. astro add, astro check)
+npm run typecheck    # Run TypeScript type checking
 npm run lint         # Run oxlint
 npm run lint:fix     # Auto-fix oxlint issues
 npm run fmt:check    # Check formatting
