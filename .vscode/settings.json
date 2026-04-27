@@ -1,6 +1,9 @@
 {
+  "oxc.fmt.configPath": ".oxfmtrc.json",
+  "oxc.configPath": ".oxlintrc.json",
+  "oxc.path.tsgolint": "node_modules/.bin/tsgolint",
   "editor.formatOnSave": false,
-  "[javascript][typescript][javascriptreact][typescriptreact]": {
+  "[javascript][typescript][javascriptreact][typescriptreact][json][jsonc]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "[astro]": {
