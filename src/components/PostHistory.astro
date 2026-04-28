@@ -1,0 +1,36 @@
+---
+import { commitUrl, postHistoryUrl, type GitCommit } from "../utils/git";
+import { formatDateShort } from "../utils/date";
+
+interface Props {
+  history: GitCommit[];
+  postId: string;
+}
+
+const { history, postId } = Astro.props;
+const historyUrl = postHistoryUrl(postId);
+---
+
+{
+  history.length > 1 && (
+    <details class="post-history">
+      <summary>
+        <span class="meta-key">history</span>
+        <span class="history-count">{history.length} revisions</span>
+      </summary>
+      <ul class="history-list">
+        {history.map((commit) => (
+          <li>
+            <time>{formatDateShort(commit.date)}</time>
+            <a href={commitUrl(commit.hash)} target="_blank" rel="noopener noreferrer">
+              {commit.message}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a class="history-full-link" href={historyUrl} target="_blank" rel="noopener noreferrer">
+        full history on GitHub →
+      </a>
+    </details>
+  )
+}
