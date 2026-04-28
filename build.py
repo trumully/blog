@@ -15,7 +15,8 @@ _IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
 
 
 def run(*command: str | Path) -> None:
-    msg = f"Running {' '.join(str(c) for c in command)}"
+    cmd_str = " ".join(str(c) for c in command)
+    msg = f"Running {cmd_str}"
     if _IS_GITHUB_ACTIONS:
         print(f"::group::{msg}", flush=True)
     else:
@@ -32,14 +33,14 @@ def run(*command: str | Path) -> None:
             print("::endgroup::", flush=True)
 
     if process.returncode != 0:
-        error = f"'{' '.join(str(c) for c in command)}' failed with exit code {process.returncode}"
-        raise RuntimeError(error)
+        error_msg = f"'{cmd_str}' failed with exit code {process.returncode}"
+        raise RuntimeError(error_msg)
 
 
 def main() -> None:
     root = Path(__file__).parent
     os.chdir(root)
-    os.unsetenv("VIRTUAL_ENV")
+    os.environ.pop("VIRTUAL_ENV", None)
 
     parser = argparse.ArgumentParser(description="Main build script for blog")
     parser.add_argument("--skip-install", action="store_true", help="Skip package installs")
