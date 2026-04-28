@@ -1,27 +1,46 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import Comments from "../components/Comments.astro";
+import PostHistory from "../components/PostHistory.astro";
 import { formatDate } from "../utils/date";
-const { frontmatter } = Astro.props;
+import type { GitCommit } from "../utils/git";
+
+interface Props {
+  frontmatter: {
+    title: string;
+    date: Date;
+    updated?: Date;
+    description: string;
+    tags: string[];
+  };
+  postId: string;
+  history: GitCommit[];
+}
+
+const { frontmatter, postId, history } = Astro.props;
+const updatedDate = frontmatter.updated ?? (history.length > 1 ? history[0].date : null);
 ---
 
 <BaseLayout pageTitle={frontmatter.title} description={frontmatter.description}>
   <div class="post-meta">
-    <span class="meta-key">date</span>
+    <span class="meta-key">published</span>
     <span>{formatDate(frontmatter.date)}</span>
-    <span class="meta-key">desc</span>
+    {
+      updatedDate && (
+        <>
+          <span class="meta-key">updated</span>
+          <span>{formatDate(updatedDate)}</span>
+        </>
+      )
+    }
+    <span class="meta-key">description</span>
     <span>{frontmatter.description}</span>
     <span class="meta-key">tags</span>
     <span class="meta-tags">
       {frontmatter.tags.map((tag: string) => <a href={`${import.meta.env.BASE_URL}tags/${tag}`}>{tag}</a>)}
     </span>
   </div>
+  <PostHistory history={history} postId={postId} />
   <slot />
-  <Comments
-    postId={frontmatter.slug ??
-      frontmatter.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "")}
-  />
+  <Comments postId={postId} />
 </BaseLayout>
