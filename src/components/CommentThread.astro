@@ -1,0 +1,26 @@
+---
+interface Props {
+  depth: number;
+}
+const { depth } = Astro.props;
+---
+
+{
+  depth > 0 ? (
+    <div class="comment-thread">
+      <Astro.self depth={depth - 1}>
+        <slot />
+      </Astro.self>
+    </div>
+  ) : (
+    <slot />
+  )
+}
+
+<style>
+  .comment-thread {
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+    margin-top: 0.5rem;
+  }
+</style>
