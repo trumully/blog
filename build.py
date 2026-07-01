@@ -58,20 +58,23 @@ def main() -> None:
     os.environ["SKIP_SOURCEMAPS"] = "true"
 
     if not args.skip_install:
-        run("npm", "install")
-        run("npm", "run", "astro", "sync")
+        if _IS_GITHUB_ACTIONS:
+            run("npm", "ci")
+        else:
+            run("npm", "install")
+        run("node", "--run", "astro", "--", "sync")
 
     if do_fix:
-        run("npm", "run", "lint:fix")
-        run("npm", "run", "fmt")
+        run("node", "--run", "lint:fix")
+        run("node", "--run", "fmt")
 
     if do_lint:
-        run("npm", "run", "typecheck")
-        run("npm", "run", "lint")
-        run("npm", "run", "fmt:check")
+        run("node", "--run", "typecheck")
+        run("node", "--run", "lint")
+        run("node", "--run", "fmt:check")
 
     if do_build:
-        run("npm", "run", "build")
+        run("node", "--run", "build")
 
 
 if __name__ == "__main__":
