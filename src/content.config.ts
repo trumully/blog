@@ -16,7 +16,8 @@ const comments = defineCollection({
   schema: z.object({
     author: z.string(),
     date: z.coerce.date(),
-    url: z.string().url().optional(),
+    url: z.url().optional(),
+    replyTo: z.string().optional(),
   }),
 });
 // Export a single `collections` object to register your collection(s)

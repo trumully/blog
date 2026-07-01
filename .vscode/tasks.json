@@ -15,6 +15,11 @@
       "id": "authorName",
       "type": "promptString",
       "description": "Your name (e.g. John Doe)"
+    },
+    {
+      "id": "replyTo",
+      "type": "promptString",
+      "description": "Parent comment filename to reply to, without .md (e.g. 1677368830-john-doe). Leave blank for top-level comment."
     }
   ],
   "tasks": [
@@ -31,7 +36,7 @@
     {
       "label": "New Comment",
       "type": "shell",
-      "command": "node .vscode/new-comment.mts \"${input:postSlug}\" \"${input:authorName}\"",
+      "command": "node .vscode/new-comment.mts \"${input:postSlug}\" \"${input:authorName}\" \"${input:replyTo}\"",
       "presentation": {
         "reveal": "always",
         "panel": "shared"

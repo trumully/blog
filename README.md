@@ -23,7 +23,8 @@ File name: `{unix-timestamp}-{your-name}.md`
 ---
 author: Your Name
 date: 2026-03-07T10:00:00Z
-# url: https://your-website.com  # optional, delete this line if not applicable
+# url: https://your-website.com     # optional
+# replyTo: 1677368830-author-slug   # optional - parent comment filename (no .md)
 ---
 
 Your comment here. You can use **markdown**!

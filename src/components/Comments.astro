@@ -1,30 +1,84 @@
 ---
 import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import Comment from "./Comment.astro";
+import CommentThread from "./CommentThread.astro";
 
 interface Props {
   postId: string;
 }
 const { postId } = Astro.props;
 
+const MAX_DEPTH = 3;
+
+type CommentEntry = CollectionEntry<"comments">;
+interface CommentNode {
+  comment: CommentEntry;
+  fileId: string;
+  children: CommentNode[];
+}
+interface FlatComment {
+  comment: CommentEntry;
+  fileId: string;
+  depth: number;
+}
+
+function buildFlat(comments: readonly CommentEntry[]): FlatComment[] {
+  const sorted = [...comments].sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+
+  const nodeMap = new Map<string, CommentNode>();
+  const roots: CommentNode[] = [];
+
+  for (const c of sorted) {
+    const fileId = c.id.split("/").pop()!;
+    const node: CommentNode = { comment: c, fileId, children: [] };
+    nodeMap.set(fileId, node);
+    const parent = c.data.replyTo ? nodeMap.get(c.data.replyTo) : undefined;
+    if (parent !== undefined) {
+      parent.children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+
+  const flat: FlatComment[] = [];
+  function dfs(node: CommentNode, depth: number): void {
+    flat.push({ comment: node.comment, fileId: node.fileId, depth: Math.min(depth, MAX_DEPTH) });
+    for (const child of node.children) {
+      dfs(child, depth + 1);
+    }
+  }
+  for (const root of roots) {
+    dfs(root, 0);
+  }
+  return flat;
+}
+
 const allComments = await getCollection("comments");
-const postComments = allComments
-  .filter((c) => c.id.startsWith(postId + "/"))
-  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+const postComments = allComments.filter((c) => c.id.startsWith(postId + "/"));
+const flatComments = buildFlat(postComments);
 ---
 
 {
-  postComments.length > 0 && (
+  flatComments.length > 0 && (
     <>
       <hr />
       <section class="comments">
         <h2>Comments</h2>
-        {postComments.map(async (c) => {
+        {flatComments.map(async ({ comment: c, fileId, depth }) => {
           const { Content } = await render(c);
           return (
-            <Comment author={c.data.author} date={c.data.date} url={c.data.url} id={c.id.split("/").pop()!}>
-              <Content />
-            </Comment>
+            <CommentThread depth={depth}>
+              <Comment
+                id={fileId}
+                author={c.data.author}
+                date={c.data.date}
+                url={c.data.url}
+                replyToId={c.data.replyTo}
+              >
+                <Content />
+              </Comment>
+            </CommentThread>
           );
         })}
       </section>

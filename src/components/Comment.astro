@@ -6,8 +6,9 @@ interface Props {
   author: string;
   date: Date;
   url?: string;
+  replyToId?: string;
 }
-const { id, author, date, url } = Astro.props;
+const { id, author, date, url, replyToId } = Astro.props;
 const formattedDate = formatDateComment(date);
 ---
 
@@ -26,6 +27,13 @@ const formattedDate = formatDateComment(date);
       }
     </span>
     <a class="comment-permalink" href={`#${id}`}>#</a>
+    {
+      replyToId && (
+        <a class="comment-reply-ref" href={`#${replyToId}`}>
+          [↑]
+        </a>
+      )
+    }
   </div>
   <div class="comment-body">
     <slot />
@@ -69,6 +77,15 @@ const formattedDate = formatDateComment(date);
     text-decoration: none;
   }
   .comment-permalink:hover {
+    color: var(--accent);
+  }
+
+  .comment-reply-ref {
+    color: var(--muted);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+  .comment-reply-ref:hover {
     color: var(--accent);
   }
 </style>

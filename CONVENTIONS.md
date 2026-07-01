@@ -56,13 +56,14 @@ Bugs caused by developer.
 
 ## Content Schemas
 
-**Blog post** (`src/blog/*.md`) frontmatter (all required):
+**Blog post** (`src/blog/*.md`) frontmatter:
 
 ```yaml
-title: "Post Title"
-date: 2026-01-01
-description: "Short description"
-tags: ["tag1", "tag2"]
+title: "Post Title" # required
+date: 2026-01-01 # required
+updated: 2026-01-02 # optional
+description: "Short description" # required
+tags: ["tag1", "tag2"] # required
 ```
 
 **Comment** (`src/content/comments/*.md`) frontmatter:
@@ -71,4 +72,5 @@ tags: ["tag1", "tag2"]
 author: "Name" # required
 date: 2026-01-01 # required
 url: "https://..." # optional
+replyTo: "1677368830-author-slug" # optional - parent comment filename (no .md)
 ```
