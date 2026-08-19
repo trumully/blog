@@ -35,8 +35,12 @@ const postsWithContent = await Promise.all(
           <div class="post-meta">
             <span class="meta-key">published</span>
             <span>{formatDate(post.data.date)}</span>
-            <span class="meta-key">description</span>
-            <span>{post.data.description}</span>
+            {post.data.description && (
+              <>
+                <span class="meta-key">description</span>
+                <span>{post.data.description}</span>
+              </>
+            )}
           </div>
           <Content />
         </article>
