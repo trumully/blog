@@ -56,12 +56,12 @@ Bugs caused by developer.
 
 ## Content Schemas
 
-**Blog post** (`src/blog/*.md`) frontmatter (all required):
+**Blog post** (`src/blog/*.md`) frontmatter:
 
 ```yaml
 title: "Post Title"
 date: 2026-01-01
-description: "Short description"
+description: "Short description" # optional
 tags: ["tag1", "tag2"]
 ```
 
