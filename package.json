@@ -14,10 +14,10 @@
     "typecheck": "tsc --build --noEmit"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.18",
-    "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
     "@catppuccin/palette": "^1.8.0",
-    "astro": "^6.1.9"
+    "astro": "^7.3.3"
   },
   "devDependencies": {
     "oxfmt": "^0.46.0",
