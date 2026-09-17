@@ -11,13 +11,16 @@
     "lint:fix": "oxlint . --fix",
     "fmt": "oxfmt . && prettier --write \"**/*.astro\"",
     "fmt:check": "oxfmt --check . && prettier --check \"**/*.astro\"",
-    "typecheck": "tsc --build --noEmit"
+    "typecheck": "tsc --build --noEmit",
+    "test": "node --test"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@catppuccin/palette": "^1.8.0",
-    "astro": "^7.3.3"
+    "astro": "^7.3.3",
+    "astro-mermaid": "^2.1.0",
+    "mermaid": "^11.17.2"
   },
   "devDependencies": {
     "oxfmt": "^0.46.0",

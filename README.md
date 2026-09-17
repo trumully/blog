@@ -29,6 +29,26 @@ date: 2026-03-07T10:00:00Z
 Your comment here. You can use **markdown**!
 ```
 
+## Mermaid diagrams
+
+Use Mermaid diagrams in blog posts with a `mermaid` fence. The diagram renders in the browser and follows the site's light/dark theme toggle.
+
+````markdown
+```mermaid
+flowchart TD
+  Start --> Finish
+```
+````
+
+To show the source instead, add `source` after the language. It remains a syntax-highlighted code block:
+
+````markdown
+```mermaid source
+flowchart TD
+  Start --> Finish
+```
+````
+
 ## Contributions
 
 This is my personal blog, but I am happy to accept contributions such as:
