@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import argparse
 import os
-
 from pathlib import Path
 from subprocess import Popen
 
@@ -43,11 +42,17 @@ def main() -> None:
     os.environ.pop("VIRTUAL_ENV", None)
 
     parser = argparse.ArgumentParser(description="Main build script for blog")
-    parser.add_argument("--skip-install", action="store_true", help="Skip package installs")
-    parser.add_argument("--fix", action="store_true", help="Fix issues like linting, formatting, etc.")
+    parser.add_argument(
+        "--skip-install", action="store_true", help="Skip package installs"
+    )
+    parser.add_argument(
+        "--fix", action="store_true", help="Fix issues like linting, formatting, etc."
+    )
     parser.add_argument("--lint", action="store_true", help="Run linting")
     parser.add_argument("--build", action="store_true", help="Run build")
-    parser.add_argument("--check", action="store_true", help="Run checks like linting, build")
+    parser.add_argument(
+        "--check", action="store_true", help="Run checks like linting, build"
+    )
     args = parser.parse_args()
 
     do_fix = args.fix
