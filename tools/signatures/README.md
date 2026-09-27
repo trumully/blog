@@ -6,7 +6,7 @@
 node .vscode/new-post.mts <post-slug>
 ```
 
-That's all: normal posts automatically reuse a registered signature and its matching social-preview image. No Blender run, image generation, or artwork decision is needed. The canonical post path selects a shared composition in [src/utils/signature-selection.ts](../../src/utils/signature-selection.ts); [src/components/SignatureArt.astro](../../src/components/SignatureArt.astro) uses its Latte/Mocha pair, and [src/layouts/MarkdownPostLayout.astro](../../src/layouts/MarkdownPostLayout.astro) uses the matching preview. Posts do not get unique artwork, and their titles, bodies, and tags do not affect selection.
+That's all: normal posts automatically reuse a registered signature. No Blender run, manual image generation, or artwork decision is needed. The canonical post path selects a shared composition in [src/utils/signature-selection.ts](../../src/utils/signature-selection.ts); [src/components/SignatureArt.astro](../../src/components/SignatureArt.astro) uses its Latte/Mocha pair. The static build generates a matching social card with the post title, description (or a plain-text excerpt when absent), and Mocha signature. [src/layouts/MarkdownPostLayout.astro](../../src/layouts/MarkdownPostLayout.astro) points Open Graph and Twitter metadata at that card. Posts do not get unique artwork, and their titles, bodies, and tags do not affect artwork selection.
 
 ## 2. Optionally render a candidate
 
@@ -25,7 +25,7 @@ A Blender study family is separate from a website composition ID. Choose and app
 1. Copy the reviewed transparent RGBA pair (no theme-colored matte) to [src/assets/signatures/](../../src/assets/signatures/) as `<id>/latte.png` and `<id>/mocha.png`.
 2. Add the ID to `SIGNATURE_COMPOSITIONS` and its Latte/Mocha colors to `SIGNATURE_ACCENTS` in [src/utils/signature-selection.ts](../../src/utils/signature-selection.ts). Add a `PINNED_COMPOSITIONS` entry keyed by the canonical path `/posts/<post-slug>/` only when that post should keep this composition. Unpinned posts are selected automatically; adding an ID can reassign some of them, while pins remain stable.
 3. Import both PNGs and add the same ID to `masterPairs` in [src/components/SignatureArt.astro](../../src/components/SignatureArt.astro). Keep the asset folder, imports, pair, composition ID, and accent palette aligned.
-4. After adding the source PNGs, run the manual preview generator:
+4. Post social cards are generated automatically during the build. To refresh the shared artwork-only fallback images for non-post pages, run the manual preview generator:
 
    ```sh
    node tools/social/generate-previews.mjs
@@ -39,7 +39,9 @@ A Blender study family is separate from a website composition ID. Choose and app
    uv run build.py --skip-install --check
    ```
 
-   Check `dist/posts/<post-slug>/index.html` points `og:image` and `twitter:image` to the intended `/social/<id>.jpg`, and confirm `dist/social/<id>.jpg` exists.
+   Check `dist/posts/<post-slug>/index.html` points `og:image` and `twitter:image` to the same `/social/posts/<post-slug>/<revision>.jpg`, and confirm that JPEG exists in `dist/`. Review it for readable title/description text and the matching signature. Copy changes generate a new image URL; bump the card version in [src/utils/post-social.ts](../../src/utils/post-social.ts) after design, font, or artwork changes. Platforms may still cache the page metadata until they scrape the link again.
+
+   Run social-card regression tests with `node --test tools/social/social-cards.test.mts`.
 
 ## Advanced
 

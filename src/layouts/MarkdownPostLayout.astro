@@ -4,7 +4,8 @@ import Comments from "../components/Comments.astro";
 import PostHistory from "../components/PostHistory.astro";
 import SignatureArt from "../components/SignatureArt.astro";
 import { formatDate, formatDateShort } from "../utils/date";
-import { selectSignatureAccent, selectSignatureComposition } from "../utils/signature-selection";
+import { selectSignatureAccent } from "../utils/signature-selection";
+import type { PostSocialCard } from "../utils/post-social";
 import { postPath, publicPath } from "../utils/urls";
 import type { GitCommit } from "../utils/git";
 
@@ -18,21 +19,22 @@ interface Props {
   };
   postId: string;
   history: GitCommit[];
+  socialCard: PostSocialCard;
 }
 
-const { frontmatter, postId, history } = Astro.props;
+const { frontmatter, postId, history, socialCard } = Astro.props;
 const updatedDate = frontmatter.updated ?? null;
 const articlePath = postPath(postId);
-const signatureComposition = selectSignatureComposition(articlePath);
 const signatureAccent = selectSignatureAccent(articlePath);
 const signatureAccentStyle = `--signature-accent-latte: ${signatureAccent.latte}; --signature-accent-mocha: ${signatureAccent.mocha};`;
 ---
 
 <BaseLayout
   pageTitle={frontmatter.title}
-  description={frontmatter.description}
+  description={socialCard.description}
   socialType="article"
-  socialImage={publicPath(`/social/${signatureComposition}.jpg`)}
+  socialImage={publicPath(socialCard.imagePath)}
+  socialImageAlt={socialCard.imageAlt}
 >
   <article class="post-page" aria-label={frontmatter.title} style={signatureAccentStyle}>
     <header class="article-opening">

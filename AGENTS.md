@@ -11,7 +11,7 @@ node .vscode/new-post.mts <post-slug>
 node .vscode/new-comment.mts <post-slug> "<author-name>"
 ```
 
-The **New Post** and **New Comment** VS Code tasks are also available. See [src/content.config.ts](src/content.config.ts) for the authoritative content schemas. New posts automatically reuse the registered signature and matching preview—no rendering is needed; for approved artwork changes, see [tools/signatures/README.md](tools/signatures/README.md).
+The **New Post** and **New Comment** VS Code tasks are also available. See [src/content.config.ts](src/content.config.ts) for the authoritative content schemas. New posts automatically reuse a registered signature; the build generates a matching social card with the title and description—no manual rendering is needed; for approved artwork changes, see [tools/signatures/README.md](tools/signatures/README.md).
 
 ## Checks
 
