@@ -1,46 +1,27 @@
-See [ARCHITECTURE.md](ARCHITECTURE.md) to understand the project. See [CONVENTIONS.md](CONVENTIONS.md) for naming, formatting, and other conventions.
+# Agent guidance
 
-Oxfmt used for JS/TS code formatting. Oxfmt + Prettier used for Astro code formatting.
+Read [ARCHITECTURE.md](ARCHITECTURE.md) before changing content flow, rendering, or site structure. Follow [CONVENTIONS.md](CONVENTIONS.md) for shared naming, formatting, error-handling, and content conventions.
 
 ## Content creation
 
-Use these scripts (not manual file creation) — they set correct paths, timestamps, and frontmatter:
+Use the scaffolding scripts rather than creating posts or comments manually; they generate the expected paths, timestamps, and starter frontmatter:
 
 ```sh
-node .vscode/new-post.mts <post-slug>        # creates src/blog/<slug>.md
-node .vscode/new-comment.mts <post-slug> <author-name>  # creates src/content/comments/<postSlug>/<ts>-<authorSlug>.md
+node .vscode/new-post.mts <post-slug>
+node .vscode/new-comment.mts <post-slug> "<author-name>"
 ```
 
-Also available as VS Code tasks: **New Post** / **New Comment** (prompts for inputs).
+The **New Post** and **New Comment** VS Code tasks are also available. See [src/content.config.ts](src/content.config.ts) for the authoritative content schemas. New posts automatically reuse the registered signature and matching preview—no rendering is needed; for approved artwork changes, see [tools/signatures/README.md](tools/signatures/README.md).
 
-## Deployment & CI
+## Checks
 
-- Hosted on GitHub Pages at `https://truman.mulholland.nz`
-- CI runs lint + build on every push and PR
-- Merges to `main` deploy to production
-
-## Commands
-
-Use `build.py` for orchestrated workflows (installs deps, sets env vars, runs steps in order):
+Use `build.py` for checks and fixes:
 
 ```sh
-uv run -s build.py --check               # Full CI check: typecheck + lint + fmt + build
-uv run -s build.py --lint                # Typecheck + lint + fmt check only
-uv run -s build.py --build               # Build only
-uv run -s build.py --fix                 # Auto-fix lint and formatting
-uv run -s build.py --skip-install <...>  # Skip npm install (use when deps already installed)
+uv run build.py --check
+uv run build.py --skip-install --check
+uv run build.py --fix
+uv run build.py --skip-install --fix
 ```
 
-Individual npm commands for targeted tasks:
-
-```sh
-npm run dev          # Start dev server at localhost:4321
-npm run build        # Build production site to ./dist/
-npm run preview      # Preview production build locally
-npm run astro ...    # Run Astro CLI commands (e.g. astro add, astro check)
-npm run typecheck    # Run TypeScript type checking
-npm run lint         # Run oxlint
-npm run lint:fix     # Auto-fix oxlint issues
-npm run fmt:check    # Check formatting
-npm run fmt          # Auto-fix formatting
-```
+`--check` runs typecheck, lint, formatting checks, and the static build. Run it after `--fix`. Use `--skip-install` only when dependencies are installed and Astro has already been synced.

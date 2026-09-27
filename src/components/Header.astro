@@ -1,13 +1,26 @@
 ---
 import Navigation from "./Navigation.astro";
 import ThemeIcon from "./ThemeIcon.astro";
+import { publicPath } from "../utils/urls";
+
+const homePath = publicPath("/");
 ---
 
-<header>
-  <span class="site-prompt">~ / blog</span>
-  <div class="header-right">
-    <Navigation />
-    <ThemeIcon />
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="site-wordmark" href={homePath} aria-label="Truman Mulholland home">Truman Mulholland</a>
+    <div class="header-right">
+      <Navigation />
+      <ThemeIcon />
+    </div>
   </div>
 </header>
-<hr class="header-rule" />
+
+<style>
+  .site-wordmark {
+    align-items: center;
+    font: 500 1rem/1.2 var(--font-title);
+    letter-spacing: normal;
+    text-transform: none;
+  }
+</style>

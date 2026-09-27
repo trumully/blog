@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import BlogPost from "../components/BlogPost.astro";
-import { formatDateShort } from "../utils/date";
+import { formatDate, formatDateShort } from "../utils/date";
+import { postPath, publicPath } from "../utils/urls";
 
 const allPosts = await getCollection("blog");
 const sorted = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -19,26 +19,125 @@ for (const post of sorted) {
 }
 ---
 
-<BaseLayout pageTitle="Archive" description="All posts by date">
-  {
-    [...grouped.entries()].map(([year, months]) => (
-      <section class="archive-year">
-        <h2>{year}</h2>
-        {[...months.entries()].map(([month, posts]) => (
-          <section class="archive-month">
-            <h3>{month}</h3>
-            <ul class="post-list">
-              {posts.map((post) => (
-                <BlogPost
-                  url={`${import.meta.env.BASE_URL}posts/${post.id}/`}
-                  title={post.data.title}
-                  date={formatDateShort(post.data.date)}
-                />
-              ))}
-            </ul>
-          </section>
-        ))}
-      </section>
-    ))
-  }
+<BaseLayout pageTitle="Archive" description="All posts, grouped by publication date.">
+  <div class="archive-page">
+    <p class="page-intro">A chronological index of published writing.</p>
+    {
+      [...grouped.entries()].map(([year, months]) => (
+        <section class="archive-year" aria-labelledby={`year-${year}`}>
+          <h2 id={`year-${year}`}>{year}</h2>
+          {[...months.entries()].map(([month, posts]) => (
+            <section class="archive-month" aria-labelledby={`month-${year}-${month}`}>
+              <h3 id={`month-${year}-${month}`}>{month}</h3>
+              <ol class="archive-list">
+                {posts.map((post) => (
+                  <li>
+                    <a href={publicPath(postPath(post.id))}>
+                      <time datetime={post.data.date.toISOString()} title={formatDate(post.data.date)}>
+                        {formatDateShort(post.data.date)}
+                      </time>
+                      <span>{post.data.title}</span>
+                      <span class="entry-arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ))}
+        </section>
+      ))
+    }
+  </div>
 </BaseLayout>
+
+<style>
+  .archive-page {
+    margin-top: 1rem;
+  }
+
+  .page-intro {
+    max-width: 58ch;
+    margin: 0 0 2rem;
+    color: var(--muted, currentColor);
+    line-height: 1.7;
+  }
+
+  .archive-year {
+    margin-top: 2.5rem;
+  }
+
+  .archive-year > h2 {
+    margin-bottom: 0;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid var(--border, currentColor);
+    font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    letter-spacing: -0.03em;
+  }
+
+  .archive-month {
+    display: grid;
+    grid-template-columns: minmax(6rem, 0.25fr) minmax(0, 1fr);
+    gap: 0.75rem 1.5rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border, currentColor);
+  }
+
+  .archive-month > h3 {
+    margin: 0;
+    color: var(--muted, currentColor);
+    font-size: 0.8rem;
+    font-weight: 400;
+  }
+
+  .archive-list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .archive-list > li + li {
+    margin-top: 0;
+  }
+
+  .archive-list a {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, auto) minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.4rem 1rem;
+    color: var(--text, inherit);
+    text-decoration: none;
+  }
+
+  .archive-list time {
+    color: var(--muted, currentColor);
+    font-size: 0.75rem;
+  }
+
+  .archive-list a:hover span:not(.entry-arrow),
+  .archive-list a:focus-visible span:not(.entry-arrow) {
+    color: var(--link, var(--accent, currentColor));
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .entry-arrow {
+    color: var(--accent, currentColor);
+  }
+
+  @media (max-width: 38rem) {
+    .archive-month {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.6rem;
+    }
+
+    .archive-list a {
+      grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr) auto;
+      gap: 0.35rem 0.65rem;
+    }
+  }
+</style>

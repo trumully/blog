@@ -1,13 +1,75 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { publicPath } from "../../utils/urls";
+
 const allPosts = await getCollection("blog");
-const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
-const pageTitle = "Tags";
+const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())].sort((a, b) => a.localeCompare(b));
+const tagCounts = new Map(tags.map((tag) => [tag, allPosts.filter((post) => post.data.tags.includes(tag)).length]));
 ---
 
-<BaseLayout pageTitle={pageTitle}>
-  <div class="tags-list">
-    {tags.map((tag: string) => <a href={`${import.meta.env.BASE_URL}tags/${tag}`}>{tag}</a>)}
-  </div>
+<BaseLayout pageTitle="Tags" description="Browse writing by topic.">
+  <section class="tags-page" aria-label="Topics">
+    <p class="page-intro">Browse notes by topic.</p>
+    <ul class="topic-list">
+      {
+        tags.map((tag) => (
+          <li>
+            <a href={publicPath(`/tags/${tag}/`)}>
+              <span>{tag}</span>
+              <span class="topic-count">
+                {tagCounts.get(tag)} {tagCounts.get(tag) === 1 ? "post" : "posts"}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 </BaseLayout>
+
+<style>
+  .tags-page {
+    margin-top: 1rem;
+  }
+
+  .page-intro {
+    max-width: 58ch;
+    margin: 0 0 1.5rem;
+    color: var(--muted, currentColor);
+    line-height: 1.7;
+  }
+
+  .topic-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .topic-list a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--border, currentColor);
+    color: var(--text, inherit);
+    text-decoration: none;
+  }
+
+  .topic-list a:hover span:first-child,
+  .topic-list a:focus-visible span:first-child {
+    color: var(--link, var(--accent, currentColor));
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .topic-count {
+    flex: 0 0 auto;
+    color: var(--muted, currentColor);
+    font-size: 0.72rem;
+  }
+</style>

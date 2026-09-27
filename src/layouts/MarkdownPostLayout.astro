@@ -2,7 +2,10 @@
 import BaseLayout from "./BaseLayout.astro";
 import Comments from "../components/Comments.astro";
 import PostHistory from "../components/PostHistory.astro";
-import { formatDate } from "../utils/date";
+import SignatureArt from "../components/SignatureArt.astro";
+import { formatDate, formatDateShort } from "../utils/date";
+import { selectSignatureAccent, selectSignatureComposition } from "../utils/signature-selection";
+import { postPath, publicPath } from "../utils/urls";
 import type { GitCommit } from "../utils/git";
 
 interface Props {
@@ -18,35 +21,201 @@ interface Props {
 }
 
 const { frontmatter, postId, history } = Astro.props;
-const updatedDate = frontmatter.updated ?? (history.length > 1 ? history[0].date : null);
+const updatedDate = frontmatter.updated ?? null;
+const articlePath = postPath(postId);
+const signatureComposition = selectSignatureComposition(articlePath);
+const signatureAccent = selectSignatureAccent(articlePath);
+const signatureAccentStyle = `--signature-accent-latte: ${signatureAccent.latte}; --signature-accent-mocha: ${signatureAccent.mocha};`;
 ---
 
-<BaseLayout pageTitle={frontmatter.title} description={frontmatter.description}>
-  <div class="post-meta">
-    <span class="meta-key">published</span>
-    <span>{formatDate(frontmatter.date)}</span>
-    {
-      updatedDate && (
-        <>
-          <span class="meta-key">updated</span>
-          <span>{formatDate(updatedDate)}</span>
-        </>
-      )
-    }
-    {
-      frontmatter.description && (
-        <>
-          <span class="meta-key">description</span>
-          <span>{frontmatter.description}</span>
-        </>
-      )
-    }
-    <span class="meta-key">tags</span>
-    <span class="meta-tags">
-      {frontmatter.tags.map((tag: string) => <a href={`${import.meta.env.BASE_URL}tags/${tag}`}>{tag}</a>)}
-    </span>
-  </div>
-  <PostHistory history={history} postId={postId} />
-  <slot />
-  <Comments postId={postId} />
+<BaseLayout
+  pageTitle={frontmatter.title}
+  description={frontmatter.description}
+  socialType="article"
+  socialImage={publicPath(`/social/${signatureComposition}.jpg`)}
+>
+  <article class="post-page" aria-label={frontmatter.title} style={signatureAccentStyle}>
+    <header class="article-opening">
+      <a class="back-link" href={publicPath("/")}>← All writing</a>
+      <dl class="article-meta">
+        <dt>Published</dt>
+        <dd class="published-date">
+          <span class="signature-marker" aria-hidden="true"></span>
+          <time datetime={frontmatter.date.toISOString()} title={formatDate(frontmatter.date)}>
+            {formatDateShort(frontmatter.date)}
+          </time>
+        </dd>
+        {
+          updatedDate && (
+            <>
+              <dt>Updated</dt>
+              <dd>
+                <time datetime={updatedDate.toISOString()} title={formatDate(updatedDate)}>
+                  {formatDateShort(updatedDate)}
+                </time>
+              </dd>
+            </>
+          )
+        }
+        {
+          frontmatter.description && (
+            <>
+              <dt>Description</dt>
+              <dd>{frontmatter.description}</dd>
+            </>
+          )
+        }
+        <dt>Topics</dt>
+        <dd>
+          <ul class="article-tags">
+            {
+              frontmatter.tags.map((tag: string) => (
+                <li>
+                  <a href={publicPath(`/tags/${tag}/`)}>{tag}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </dd>
+      </dl>
+      <div class="article-art" aria-hidden="true">
+        <SignatureArt seed={articlePath} tags={frontmatter.tags} variant="article" />
+      </div>
+    </header>
+
+    <PostHistory history={history} postId={postId} />
+    <div class="article-prose"><slot /></div>
+    <Comments postId={postId} />
+  </article>
 </BaseLayout>
+
+<style>
+  .post-page {
+    min-width: 0;
+    --signature-accent: var(--signature-accent-latte);
+  }
+
+  :global(html.dark) .post-page {
+    --signature-accent: var(--signature-accent-mocha);
+  }
+
+  .article-opening {
+    display: grid;
+    padding: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .back-link {
+    width: fit-content;
+    color: var(--muted, currentColor);
+    font-size: 0.8rem;
+    text-decoration-color: var(--border, currentColor);
+    text-underline-offset: 0.25em;
+  }
+
+  .back-link:hover,
+  .back-link:focus-visible {
+    color: var(--accent, currentColor);
+  }
+
+  .article-meta {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr);
+    gap: 0.35rem 0.85rem;
+    margin: 0;
+    color: var(--muted, currentColor);
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+
+  .article-meta dt {
+    color: var(--accent, currentColor);
+  }
+
+  .article-meta dd {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .article-meta .published-date {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .signature-marker {
+    width: 0.38rem;
+    height: 0.18rem;
+    flex: 0 0 auto;
+    align-self: center;
+    border-radius: 999px;
+    background: var(--signature-accent);
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.8rem;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    list-style: none;
+  }
+
+  .article-tags li {
+    margin: 0;
+  }
+
+  .article-tags a {
+    color: var(--accent, currentColor);
+    text-underline-offset: 0.2em;
+  }
+
+  .article-art {
+    width: 100%;
+    max-height: 19rem;
+    overflow: hidden;
+    color: var(--accent, currentColor);
+  }
+
+  .article-art :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 19rem;
+  }
+
+  .article-prose {
+    max-width: 68ch;
+    margin: 2rem auto;
+    line-height: 1.75;
+  }
+
+  .article-prose :global(p) {
+    margin: 0 0 1.25em;
+  }
+
+  .article-prose :global(h2),
+  .article-prose :global(h3),
+  .article-prose :global(h4) {
+    margin-top: 1.8em;
+  }
+
+  @media (max-width: 40rem) {
+    .article-meta {
+      grid-template-columns: minmax(4.5rem, auto) minmax(0, 1fr);
+      gap: 0.3rem 0.65rem;
+    }
+
+    .article-art,
+    .article-art :global(svg) {
+      max-height: 13rem;
+    }
+
+    .article-prose {
+      margin-block: 1.5rem;
+    }
+  }
+</style>

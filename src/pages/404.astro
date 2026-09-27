@@ -1,8 +1,45 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { publicPath } from "../utils/urls";
 ---
 
-<BaseLayout pageTitle="Page Not Found">
-  <p>Sorry, this page doesn't exist.</p>
-  <p><a href={import.meta.env.BASE_URL}>Go back home</a></p>
+<BaseLayout pageTitle="Page Not Found" description="This page could not be found.">
+  <section class="not-found" aria-labelledby="not-found-code">
+    <p class="status-code" id="not-found-code">404 <span>/</span> not found</p>
+    <p>Sorry, this page doesn't exist.</p>
+    <a class="home-link" href={publicPath("/")}>Return to the writing index <span aria-hidden="true">→</span></a>
+  </section>
 </BaseLayout>
+
+<style>
+  .not-found {
+    max-width: 42rem;
+    margin: 2rem 0;
+  }
+
+  .status-code {
+    margin: 0;
+    color: var(--muted, currentColor);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .status-code span {
+    color: var(--accent, currentColor);
+  }
+
+  .not-found > p:not(.status-code) {
+    margin: 1rem 0 1.4rem;
+    font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+    font-size: 1.1rem;
+  }
+
+  .home-link {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: baseline;
+    color: var(--accent, currentColor);
+    text-underline-offset: 0.25em;
+  }
+</style>
