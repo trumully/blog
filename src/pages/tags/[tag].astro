@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
-import BlogPost from "../../components/BlogPost.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { formatDateShort } from "../../utils/date";
+import { formatDate, formatDateShort } from "../../utils/date";
+import { postPath, publicPath } from "../../utils/urls";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("blog");
@@ -21,16 +21,103 @@ const { posts } = Astro.props;
 ---
 
 <BaseLayout pageTitle={tag}>
-  <p>Posts tagged with {tag}</p>
-  <ul class="post-list">
-    {
-      posts.map((post) => (
-        <BlogPost
-          url={`${import.meta.env.BASE_URL}posts/${post.id}/`}
-          title={post.data.title}
-          date={formatDateShort(post.data.date)}
-        />
-      ))
-    }
-  </ul>
+  <section class="tag-page" aria-label={`Posts tagged ${tag}`}>
+    <nav class="tag-breadcrumb" aria-label="Breadcrumb">
+      <a href={publicPath("/tags/")}>All topics</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{tag}</span>
+    </nav>
+    <p class="page-intro">Posts tagged with <strong>{tag}</strong>.</p>
+    <ul class="tag-posts">
+      {
+        posts.map((post) => (
+          <li>
+            <a href={publicPath(postPath(post.id))}>
+              <time datetime={post.data.date.toISOString()} title={formatDate(post.data.date)}>
+                {formatDateShort(post.data.date)}
+              </time>
+              <span>{post.data.title}</span>
+              <span class="entry-arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 </BaseLayout>
+
+<style>
+  .tag-page {
+    margin-top: 1rem;
+  }
+
+  .tag-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.55rem;
+    color: var(--muted, currentColor);
+    font-size: 0.78rem;
+  }
+
+  .tag-breadcrumb a {
+    color: var(--accent, currentColor);
+  }
+
+  .page-intro {
+    margin: 1.3rem 0 1.5rem;
+    color: var(--muted, currentColor);
+  }
+
+  .page-intro strong {
+    color: var(--text, inherit);
+    font-weight: 600;
+  }
+
+  .tag-posts {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tag-posts li {
+    border-bottom: 1px solid var(--border, currentColor);
+  }
+
+  .tag-posts a {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, auto) minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.4rem 1rem;
+    padding: 0.65rem 0;
+    color: var(--text, inherit);
+    text-decoration: none;
+  }
+
+  .tag-posts time {
+    color: var(--muted, currentColor);
+    font-size: 0.75rem;
+  }
+
+  .entry-arrow {
+    color: var(--accent, currentColor);
+  }
+
+  .tag-posts a:hover span:not(.entry-arrow),
+  .tag-posts a:focus-visible span:not(.entry-arrow) {
+    color: var(--link, var(--accent, currentColor));
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (max-width: 38rem) {
+    .tag-posts a {
+      grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr) auto;
+      gap: 0.35rem 0.65rem;
+    }
+  }
+</style>

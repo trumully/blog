@@ -25,6 +25,7 @@
     "oxlint-tsgolint": "^0.22.0",
     "prettier": "3.8.1",
     "prettier-plugin-astro": "0.14.1",
+    "sharp": "^0.35.4",
     "typescript": "^6.0.3"
   },
   "volta": {

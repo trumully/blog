@@ -61,11 +61,12 @@ Bugs caused by developer.
 ```yaml
 title: "Post Title"
 date: 2026-01-01
+updated: 2026-01-02 # optional; last-modified date
 description: "Short description" # optional
-tags: ["tag1", "tag2"]
+tags: ["tag1", "tag2"] # required, may be empty
 ```
 
-**Comment** (`src/content/comments/*.md`) frontmatter:
+**Comment** (`src/content/comments/<postSlug>/<unixTimestamp>-<authorSlug>.md`) frontmatter:
 
 ```yaml
 author: "Name" # required

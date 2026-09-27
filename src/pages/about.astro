@@ -2,10 +2,54 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import hangyodon from "../assets/hangyodon.jpg";
-const pageTitle = "About";
 ---
 
-<BaseLayout pageTitle={pageTitle} description="About me and my journey with Astro">
-  <p>My name is Truman Mulholland and I am a Junior Software Developer from New Zealand.</p>
-  <Image src={hangyodon} alt="Hangyodon" />
+<BaseLayout pageTitle="About" description="About me and my journey with Astro">
+  <section class="about-page" aria-label="About Truman">
+    <p class="about-intro">My name is Truman Mulholland and I am a Junior Software Developer from Aotearoa.</p>
+    <figure class="about-image">
+      <Image src={hangyodon} alt="Hangyodon" />
+    </figure>
+  </section>
 </BaseLayout>
+
+<style>
+  .about-page {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(7rem, 12rem);
+    align-items: start;
+    gap: clamp(1.5rem, 5vw, 3rem);
+    margin-top: 1rem;
+  }
+
+  .about-intro {
+    max-width: 55ch;
+    margin: 0;
+    font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    line-height: 1.7;
+  }
+
+  .about-image {
+    width: 100%;
+    margin: 0;
+  }
+
+  .about-image :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border, currentColor);
+  }
+
+  @media (max-width: 35rem) {
+    .about-page {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .about-image {
+      width: min(12rem, 60%);
+      justify-self: end;
+    }
+  }
+</style>

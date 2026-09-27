@@ -1,17 +1,17 @@
 # Architecture
 
-An [Astro](https://astro.build) blog site using minimal template.
+This is a static Astro blog: Markdown collections feed file-based routes and the production build writes the site to `dist/`.
 
-- `src/pages/` — File-based routing. `.astro`, `.md`, and `.js` files become routes. Includes `posts/`, `tags/` subdirs and `rss.xml.js` endpoint.
-- `src/components/` — Astro components: `BlogPost.astro`, `Comment.astro`, `Comments.astro`, `Footer.astro`, `Header.astro`, `Navigation.astro`, `Social.astro`, `ThemeIcon.astro`.
-- `src/layouts/` — Page layouts: `BaseLayout.astro`, `MarkdownPostLayout.astro`.
-- `src/blog/` — Markdown blog post content files.
-- `src/content/comments/` — Markdown comment files. Organized as `src/content/comments/<postSlug>/<unixTimestamp>-<authorSlug>.md`.
-- `src/styles/` — Global CSS (`global.css`).
-- `src/assets/` — Static assets imported by components.
-- `src/utils/` — Utility functions (e.g. `date.ts`).
-- `src/content.config.ts` — Content collection schema for the blog.
-- `public/` — Static assets served at root (e.g. `public/favicon.svg` → `/favicon.svg`).
-- `astro.config.mts` — Astro configuration.
+## Content and rendering
 
-Astro pages use a frontmatter fence (`---`) at the top for server-side JavaScript, followed by HTML/component markup. TypeScript is configured in strict mode via `astro/tsconfigs/strict`.
+- [src/content.config.ts](src/content.config.ts) defines the Markdown loaders and authoritative schemas. Posts live in `src/blog/`; comments live under `src/content/comments/<post-slug>/`.
+- `src/pages/[...page].astro` builds the paginated writing feed; `src/pages/posts/[...slug].astro` generates post pages. Other routes provide tags, archive, about, 404, and RSS.
+- `src/layouts/` and `src/components/` provide shared page/article rendering. `MarkdownPostLayout.astro` joins post content with metadata, Git history, comments, and signature art; `Comments.astro` associates nested comment entries with their post. `src/utils/` holds supporting helpers and `src/styles/global.css` supplies global styling.
+
+## Signature artwork
+
+Production PNGs are in `src/assets/signatures/` and are imported and optimized by `src/components/SignatureArt.astro`; `src/utils/signature-selection.ts` pins canonical post identities and deterministically selects among shared compositions. The selected composition also determines each post's shared `public/social/<id>.jpg` preview. `tools/signatures/` is an offline Blender study generator, not part of the site runtime or build; its workspace registry is separate from website selection, and output is not installed or published automatically. See [the signature and preview workflow](tools/signatures/README.md) for authoring and integration details.
+
+## Build and deployment
+
+Astro configuration is in `astro.config.mts` (default site URL `https://truman.mulholland.nz`, overridable with `SITE_URL`). [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `uv run build.py --check` on pull requests and pushes to `main`; a push to `main` publishes the `dist/` artifact to GitHub Pages.

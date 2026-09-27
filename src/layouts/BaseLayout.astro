@@ -1,68 +1,152 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { canonicalPath, publicPath } from "../utils/urls";
 import "../styles/global.css";
-const { pageTitle, description } = Astro.props;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+interface Props {
+  pageTitle: string;
+  description?: string;
+  showPageHeading?: boolean;
+  socialImage?: string;
+  socialImageAlt?: string;
+  socialImageWidth?: number;
+  socialImageHeight?: number;
+  socialImageType?: string;
+  socialType?: "website" | "article";
+}
+
+const {
+  pageTitle,
+  description,
+  showPageHeading = true,
+  socialImage = publicPath("/social/ribbon-v1.jpg"),
+  socialImageAlt = "Luminous abstract light ribbons on a dark background",
+  socialImageWidth = 1200,
+  socialImageHeight = 630,
+  socialImageType = "image/jpeg",
+  socialType = "website",
+} = Astro.props;
+const isNotFoundPage = /(?:^|\/)404(?:\/|\.html)?$/i.test(Astro.url.pathname);
+const canonicalURL = new URL(publicPath(canonicalPath(Astro.url.pathname)), Astro.site);
+const socialImageURL = new URL(socialImage, Astro.site);
+const fontURL = publicPath("/fonts/newsreader/newsreader-variable.woff2");
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link rel="preload" href={fontURL} as="font" type="font/woff2" crossorigin="anonymous" />
+    <style
+      is:global
+      set:html={`@font-face { font-family: "Newsreader"; font-style: normal; font-weight: 200 800; font-display: swap; src: url("${fontURL}") format("woff2"); }`}
+    ></style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href={publicPath("/favicon.svg")} />
+    <link rel="alternate" type="application/rss+xml" title="Truman Mulholland RSS" href={publicPath("/rss.xml")} />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     {description && <meta name="description" content={description} />}
-    <link rel="canonical" href={canonicalURL} />
+    {isNotFoundPage && <meta name="robots" content="noindex" />}
+    {!isNotFoundPage && <link rel="canonical" href={canonicalURL} />}
     <meta property="og:title" content={pageTitle} />
     {description && <meta property="og:description" content={description} />}
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:type" content={socialType} />
+    {!isNotFoundPage && <meta property="og:url" content={canonicalURL} />}
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:image:width" content={socialImageWidth} />
+    <meta property="og:image:height" content={socialImageHeight} />
+    <meta property="og:image:type" content={socialImageType} />
+    <meta property="og:image:alt" content={socialImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     {description && <meta name="twitter:description" content={description} />}
+    <meta name="twitter:image" content={socialImageURL} />
+    <meta name="twitter:image:alt" content={socialImageAlt} />
   </head>
   <body>
-    <Header />
-    <h1>{pageTitle}</h1>
-    <slot />
-    <Footer />
+    <div class="site-frame">
+      <a class="skip-link" href="#main-content">Skip to content</a>
+      <Header />
+      <div class="page-layout">
+        <main id="main-content" class="page-content" tabindex="-1">
+          {showPageHeading && <h1>{pageTitle}</h1>}
+          <slot />
+        </main>
+      </div>
+      <Footer />
+    </div>
     <script>
-      document.querySelectorAll("pre").forEach((pre) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "code-block-wrapper";
-        pre.parentNode!.insertBefore(wrapper, pre);
-        wrapper.appendChild(pre);
+      const copyButtonResetTimers = new WeakMap<HTMLButtonElement, number>();
 
-        const btn = document.createElement("button");
-        btn.className = "copy-btn";
-        btn.type = "button";
-        btn.textContent = "copy";
-        wrapper.appendChild(btn);
+      const enhanceCodeBlocks = () => {
+        document.querySelectorAll("pre").forEach((pre) => {
+          if (pre.parentElement?.classList.contains("code-block-wrapper")) return;
 
-        btn.addEventListener("click", () => {
-          navigator.clipboard
-            .writeText(pre.querySelector("code")?.textContent ?? pre.textContent ?? "")
-            .then(() => {
-              btn.textContent = "copied!";
-              btn.classList.add("copied");
-              setTimeout(() => {
-                btn.textContent = "copy";
-                btn.classList.remove("copied");
-              }, 2000);
-            })
-            .catch(() => {
-              btn.textContent = "error";
-              setTimeout(() => {
-                btn.textContent = "copy";
-              }, 2000);
-            });
+          const parent = pre.parentNode;
+          if (!parent) return;
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "code-block-wrapper";
+          const language = pre.dataset.language?.trim();
+          if (language) wrapper.dataset.language = language;
+          parent.insertBefore(wrapper, pre);
+          wrapper.appendChild(pre);
+
+          const button = document.createElement("button");
+          button.className = "copy-btn";
+          button.type = "button";
+          button.textContent = "copy";
+          button.setAttribute("aria-label", "Copy code to clipboard");
+          button.setAttribute("aria-live", "polite");
+          wrapper.appendChild(button);
         });
+      };
+
+      const copyCode = async (button: HTMLButtonElement) => {
+        const pre = button.closest(".code-block-wrapper")?.querySelector("pre");
+        if (!pre) return;
+
+        try {
+          const clipboard = navigator.clipboard;
+          if (!clipboard?.writeText) throw new Error("Clipboard API is unavailable");
+          await clipboard.writeText(pre.querySelector("code")?.textContent ?? pre.textContent ?? "");
+          button.textContent = "copied!";
+          button.classList.add("copied");
+          button.setAttribute("aria-label", "Code copied to clipboard");
+        } catch {
+          button.textContent = "error";
+          button.classList.remove("copied");
+          button.setAttribute("aria-label", "Unable to copy code");
+        }
+
+        const previousTimer = copyButtonResetTimers.get(button);
+        if (previousTimer !== undefined) window.clearTimeout(previousTimer);
+        copyButtonResetTimers.set(
+          button,
+          window.setTimeout(() => {
+            button.textContent = "copy";
+            button.classList.remove("copied");
+            button.setAttribute("aria-label", "Copy code to clipboard");
+            copyButtonResetTimers.delete(button);
+          }, 2000)
+        );
+      };
+
+      document.addEventListener("click", (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const button = target?.closest(".copy-btn");
+        if (button instanceof HTMLButtonElement) void copyCode(button);
       });
+
+      document.addEventListener("astro:page-load", enhanceCodeBlocks);
+      enhanceCodeBlocks();
     </script>
   </body>
 </html>

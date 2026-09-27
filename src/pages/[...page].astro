@@ -1,9 +1,13 @@
 ---
 import type { GetStaticPathsOptions, Page } from "astro";
-import { getCollection, render } from "astro:content";
+import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import SignatureArt from "../components/SignatureArt.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { formatDate } from "../utils/date";
+import { formatDate, formatDateShort } from "../utils/date";
+import { postPath, publicPath } from "../utils/urls";
+import { selectSignatureAccent } from "../utils/signature-selection";
+import { markdownExcerpt } from "../utils/summary";
 
 interface Props {
   page: Page<CollectionEntry<"blog">>;
@@ -16,41 +20,213 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 }
 
 const { page } = Astro.props;
-const postsWithContent = await Promise.all(
-  page.data.map(async (post) => {
-    const { Content } = await render(post);
-    return { post, Content };
-  })
-);
+const posts = page.data.map((post) => {
+  const path = postPath(post.id);
+  return {
+    post,
+    path,
+    accent: selectSignatureAccent(path),
+    summary: post.data.description?.trim() || markdownExcerpt(post.body ?? "", 180),
+  };
+});
 ---
 
-<BaseLayout pageTitle="trumully blog" description="My blog">
-  {
-    postsWithContent.map(({ post, Content }, i) => (
-      <>
-        <article class="post-full">
-          <h2>
-            <a href={`${import.meta.env.BASE_URL}posts/${post.id}/`}>{post.data.title}</a>
-          </h2>
-          <div class="post-meta">
-            <span class="meta-key">published</span>
-            <span>{formatDate(post.data.date)}</span>
-            {post.data.description && (
-              <>
-                <span class="meta-key">description</span>
-                <span>{post.data.description}</span>
-              </>
-            )}
+<BaseLayout pageTitle="Writing" description="Notes on software development, tooling, and things I've built.">
+  <section class="writing-feed" aria-label="Latest writing">
+    {
+      posts.map(({ post, path, accent, summary }) => (
+        <article
+          class="post-summary"
+          aria-labelledby={`post-${post.id}`}
+          style={`--signature-accent-latte: ${accent.latte}; --signature-accent-mocha: ${accent.mocha};`}
+        >
+          <div class="entry-meta">
+            <time datetime={post.data.date.toISOString()} title={formatDate(post.data.date)}>
+              {formatDateShort(post.data.date)}
+            </time>
+            <span class="meta-divider" aria-hidden="true" />
+            <ul class="entry-tags" aria-label={`Topics for ${post.data.title}`}>
+              {post.data.tags.map((tag) => (
+                <li>
+                  <a href={publicPath(`/tags/${tag}/`)}>{tag}</a>
+                </li>
+              ))}
+            </ul>
           </div>
-          <Content />
+          <div class="entry-grid">
+            <div class="entry-copy">
+              <h2 id={`post-${post.id}`}>
+                <a href={publicPath(path)}>{post.data.title}</a>
+              </h2>
+              {summary && <p class="entry-summary">{summary}</p>}
+            </div>
+            <div class="entry-art" aria-hidden="true">
+              <SignatureArt seed={path} tags={post.data.tags} variant="index" />
+            </div>
+          </div>
         </article>
-        {i < postsWithContent.length - 1 && <hr />}
-      </>
-    ))
+      ))
+    }
+  </section>
+
+  {
+    page.lastPage > 1 && (
+      <nav class="pagination" aria-label="Writing pages">
+        {page.url.prev && <a href={publicPath(page.url.prev)}>← Newer posts</a>}
+        <span aria-current="page">
+          Page {page.currentPage} of {page.lastPage}
+        </span>
+        {page.url.next && <a href={publicPath(page.url.next)}>Older posts →</a>}
+      </nav>
+    )
   }
-  <nav class="pagination">
-    {page.url.prev && <a href={page.url.prev}>[← prev]</a>}
-    <span>page {page.currentPage} of {page.lastPage}</span>
-    {page.url.next && <a href={page.url.next}>[next →]</a>}
-  </nav>
 </BaseLayout>
+
+<style>
+  .writing-intro {
+    max-width: 58ch;
+    margin: 0 0 0.85rem;
+    color: var(--muted, currentColor);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .writing-feed {
+    margin-top: 0;
+  }
+
+  .post-summary {
+    --signature-accent: var(--signature-accent-latte);
+    padding: 1.15rem 0;
+    border-top: 1px solid var(--border, currentColor);
+  }
+
+  .post-summary:first-child {
+    border-top: 0;
+    padding-top: 0.5rem;
+  }
+
+  :global(html.dark) .post-summary {
+    --signature-accent: var(--signature-accent-mocha);
+  }
+
+  .entry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.65rem;
+    color: var(--muted, currentColor);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .meta-divider {
+    display: inline-block;
+    width: 0.38rem;
+    height: 0.18rem;
+    border-radius: 999px;
+    background: var(--signature-accent);
+  }
+
+  .entry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.7rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    list-style: none;
+  }
+
+  .entry-tags li {
+    margin: 0;
+  }
+
+  .entry-tags a {
+    color: var(--muted, currentColor);
+    text-decoration-color: var(--border, currentColor);
+    text-underline-offset: 0.2em;
+  }
+
+  .entry-tags a:hover,
+  .entry-tags a:focus-visible {
+    color: var(--link, var(--accent, currentColor));
+  }
+
+  .entry-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(4.5rem, 22vw, 13.69rem);
+    align-items: center;
+    gap: clamp(0.75rem, 3vw, 1.5rem);
+  }
+
+  .entry-copy h2 {
+    margin: 0.55rem 0 0.5rem;
+    font-family: var(--font-title, Georgia, "Times New Roman", serif);
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-optical-sizing: auto;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: normal;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .entry-copy h2 a {
+    color: var(--text, inherit);
+    text-decoration: none;
+    text-decoration-color: var(--accent, currentColor);
+    text-underline-offset: 0.13em;
+  }
+
+  .entry-copy h2 a:hover,
+  .entry-copy h2 a:focus-visible {
+    color: var(--signature-accent);
+    text-decoration: underline;
+    text-decoration-color: var(--signature-accent);
+  }
+
+  .entry-summary {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--muted, currentColor);
+    line-height: 1.65;
+  }
+
+  .entry-art {
+    width: 100%;
+    min-width: 0;
+    color: var(--accent, currentColor);
+  }
+
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 1.25rem;
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--border, currentColor);
+    color: var(--muted, currentColor);
+    font-size: 0.8rem;
+  }
+
+  .pagination a {
+    color: var(--accent, currentColor);
+  }
+
+  .pagination [aria-current="page"] {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 42rem) {
+    .entry-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .entry-art {
+      display: none;
+    }
+  }
+</style>

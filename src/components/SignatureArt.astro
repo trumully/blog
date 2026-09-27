@@ -1,0 +1,123 @@
+---
+import { getImage } from "astro:assets";
+import ribbonLatte from "../assets/signatures/ribbon-v1/latte.png";
+import ribbonMocha from "../assets/signatures/ribbon-v1/mocha.png";
+import crescentLatte from "../assets/signatures/open-crescent/latte.png";
+import crescentMocha from "../assets/signatures/open-crescent/mocha.png";
+import hairpinLatte from "../assets/signatures/open-hairpin/latte.png";
+import hairpinMocha from "../assets/signatures/open-hairpin/mocha.png";
+import { canonicalPath } from "../utils/urls";
+import { selectSignatureComposition, type SignatureCompositionId } from "../utils/signature-selection";
+
+type Props = {
+  seed: string;
+  tags?: string[];
+  variant?: "index" | "article";
+};
+
+const { seed, variant = "index" } = Astro.props as Props;
+const canonicalIdentity = canonicalPath(seed);
+const compositionId = selectSignatureComposition(seed);
+
+// Seed/path is the stable selection identity; tags, theme, and panel variant do not affect the composition.
+const masterPairs = {
+  "ribbon-v1": { latte: ribbonLatte, mocha: ribbonMocha },
+  "open-crescent": { latte: crescentLatte, mocha: crescentMocha },
+  "open-hairpin": { latte: hairpinLatte, mocha: hairpinMocha },
+} satisfies Record<SignatureCompositionId, { latte: typeof ribbonLatte; mocha: typeof ribbonMocha }>;
+
+async function optimizeMaster(src: typeof ribbonLatte) {
+  const [avif, webp] = await Promise.all([
+    getImage({ src, width: 320, densities: ["1x", "2x", "3x"], format: "avif", quality: 68 }),
+    getImage({ src, width: 320, densities: ["1x", "2x", "3x"], format: "webp", quality: 82 }),
+  ]);
+
+  return [
+    { result: avif, mimeType: "image/avif" },
+    { result: webp, mimeType: "image/webp" },
+  ] as const;
+}
+
+const selectedPair = masterPairs[compositionId];
+const [latteSources, mochaSources] = await Promise.all([
+  optimizeMaster(selectedPair.latte),
+  optimizeMaster(selectedPair.mocha),
+]);
+type OptimizedSources = Awaited<ReturnType<typeof optimizeMaster>>;
+
+function imageSet(sources: OptimizedSources): string {
+  const candidates = sources.flatMap(({ result, mimeType }) =>
+    result.srcSet.values.map(
+      ({ url, descriptor }) => `url(${JSON.stringify(url)}) ${descriptor ?? "1x"} type(${JSON.stringify(mimeType)})`
+    )
+  );
+  return `image-set(${candidates.join(", ")})`;
+}
+
+const fallbackImage = (sources: OptimizedSources) => `url(${JSON.stringify(sources[1].result.src)})`;
+const optimizedImageSet = (sources: OptimizedSources) => imageSet(sources);
+const imageStyle = [
+  "--signature-aspect-ratio: 20 / 19;",
+  `--signature-latte-fallback: ${fallbackImage(latteSources)};`,
+  `--signature-latte-image-set: ${optimizedImageSet(latteSources)};`,
+  `--signature-mocha-fallback: ${fallbackImage(mochaSources)};`,
+  `--signature-mocha-image-set: ${optimizedImageSet(mochaSources)};`,
+].join(" ");
+---
+
+<div
+  class={`signature-art signature-art--${variant}`}
+  aria-hidden="true"
+  data-canonical-path={canonicalIdentity}
+  data-composition={compositionId}
+  style={imageStyle}
+>
+</div>
+
+<style>
+  .signature-art {
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--signature-aspect-ratio, 20 / 19);
+    background-image: var(--signature-latte-fallback);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  :global(html.dark) .signature-art {
+    background-image: var(--signature-mocha-fallback);
+  }
+
+  @supports (background-image: image-set(url("/favicon.svg") 1x type("image/webp"))) {
+    .signature-art {
+      background-image: var(--signature-latte-image-set);
+    }
+
+    :global(html.dark) .signature-art {
+      background-image: var(--signature-mocha-image-set);
+    }
+  }
+
+  .signature-art--index {
+    max-width: 13.69rem;
+    margin-inline-start: auto;
+  }
+
+  .signature-art--article {
+    max-width: 20rem;
+    margin-inline: auto;
+  }
+
+  @media (max-width: 42rem) {
+    .signature-art--index {
+      max-width: 9.48rem;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .signature-art--article {
+      max-width: 13.69rem;
+    }
+  }
+</style>

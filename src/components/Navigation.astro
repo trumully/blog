@@ -1,10 +1,22 @@
 ---
-const base = import.meta.env.BASE_URL;
+import { canonicalPath, publicPath } from "../utils/urls";
+
+const currentPath = canonicalPath(Astro.url.pathname);
+const homePath = publicPath("/");
+const aboutPath = publicPath("/about/");
+const archivePath = publicPath("/archive/");
+const tagsPath = publicPath("/tags/");
+const isActive = (path: string) => {
+  const normalizedPath = canonicalPath(path);
+  return currentPath === normalizedPath || (normalizedPath === tagsPath && currentPath.startsWith(normalizedPath));
+};
 ---
 
-<div id="main-menu" class="nav-links">
-  <a href={base}>home</a>
-  <a href={`${base}about/`}>about</a>
-  <a href={`${base}archive/`}>archive</a>
-  <a href={`${base}tags/`}>tags</a>
-</div>
+<nav class="site-navigation" aria-label="Primary navigation">
+  <div id="main-menu" class="nav-links">
+    <a href={homePath} aria-current={isActive(homePath) ? "page" : undefined}>home</a>
+    <a href={aboutPath} aria-current={isActive(aboutPath) ? "page" : undefined}>about</a>
+    <a href={archivePath} aria-current={isActive(archivePath) ? "page" : undefined}>archive</a>
+    <a href={tagsPath} aria-current={isActive(tagsPath) ? "page" : undefined}>tags</a>
+  </div>
+</nav>

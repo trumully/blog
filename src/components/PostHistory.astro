@@ -1,5 +1,5 @@
 ---
-import { commitUrl, postHistoryUrl, type GitCommit } from "../utils/git";
+import { commitUrl, postHistoryUrl, shouldShowPostHistory, type GitCommit } from "../utils/git";
 import { formatDateShort } from "../utils/date";
 
 interface Props {
@@ -12,25 +12,85 @@ const historyUrl = postHistoryUrl(postId);
 ---
 
 {
-  history.length > 1 && (
+  shouldShowPostHistory(history) && (
     <details class="post-history">
-      <summary>
-        <span class="meta-key">history</span>
-        <span class="history-count">{history.length} revisions</span>
-      </summary>
+      <summary>Repository history · {history.length} commits</summary>
       <ul class="history-list">
         {history.map((commit) => (
           <li>
-            <time>{formatDateShort(commit.date)}</time>
+            <time datetime={commit.committerDate.toISOString()}>{formatDateShort(commit.committerDate)}</time>
             <a href={commitUrl(commit.hash)} target="_blank" rel="noopener noreferrer">
-              {commit.message}
+              {commit.subject}
             </a>
           </li>
         ))}
       </ul>
       <a class="history-full-link" href={historyUrl} target="_blank" rel="noopener noreferrer">
-        full history on GitHub →
+        Full history on GitHub
       </a>
     </details>
   )
 }
+
+<style>
+  .post-history {
+    margin: 1rem 0;
+    padding-left: 1rem;
+    border-left: 1px solid var(--border);
+    color: var(--muted, currentColor);
+    font-size: 0.78rem;
+  }
+
+  .post-history summary {
+    display: flex;
+    width: fit-content;
+    align-items: baseline;
+    gap: 0.8rem;
+    color: var(--signature-accent, currentColor);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .post-history summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0.65rem 0;
+    padding: 0 0 0 0.8rem;
+    border-left: 2px solid var(--signature-accent, currentColor);
+    list-style: none;
+  }
+
+  .history-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.2rem 0.75rem;
+    padding: 0.3rem 0;
+    font-size: 0.8rem;
+  }
+
+  .history-list time {
+    flex: 0 0 auto;
+    color: var(--subtle);
+    font: 400 0.68rem/1.6 var(--font-mono);
+    white-space: nowrap;
+  }
+
+  .history-list a {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .history-full-link {
+    display: inline-block;
+    margin: 0.7rem 0 0 0.8rem;
+    color: var(--muted);
+    font: 400 0.7rem/1.6 var(--font-mono);
+  }
+</style>
